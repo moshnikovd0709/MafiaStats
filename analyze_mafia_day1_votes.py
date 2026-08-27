@@ -264,72 +264,9 @@ def fmt(value) -> str:
 
 
 def main() -> None:
-    per_player, overall = analyze()
-    player_rows = [
-        row_from_stats(stats)
-        for _, stats in sorted(per_player.items(), key=lambda item: item[1]["poster_nick"])
-    ]
-    overall_row = row_from_stats(overall, "ALL")
-    write_csv(OUT_SUMMARY, player_rows)
-    write_csv(OUT_OVERALL, [overall_row])
+    from export_analysis_csv import main as export_main
 
-    print("Когда наш игрок именно мафия (не дон): куда уходит первый голос", flush=True)
-    print(NOTE, flush=True)
-    print(
-        f"Мафийных посадок: {overall['mafia_games']}; "
-        f"с первым голосом: {overall['games_with_vote']}; "
-        f"без голоса: {overall['games_no_vote']}",
-        flush=True,
-    )
-    print(
-        f"В мирных: {overall['voted_civilian']} "
-        f"({pct(overall['voted_civilian'], overall['games_with_vote'])}%); "
-        f"в шерифа: {overall['voted_sheriff']} "
-        f"({pct(overall['voted_sheriff'], overall['games_with_vote'])}%); "
-        f"во вторую мафию: {overall['voted_own_mafia']} "
-        f"({pct(overall['voted_own_mafia'], overall['games_with_vote'])}%); "
-        f"в дона: {overall['voted_own_don']} "
-        f"({pct(overall['voted_own_don'], overall['games_with_vote'])}%); "
-        f"в своих суммарно: {overall['voted_own_black']} "
-        f"({pct(overall['voted_own_black'], overall['games_with_vote'])}%); "
-        f"в себя: {overall['voted_self']}",
-        flush=True,
-    )
-    print(
-        f"Строго протоколный день 1: {overall['protocol_day1_ballot_games']} голосов "
-        f"(мирные {overall['protocol_day1_voted_civilian']}, "
-        f"шериф {overall['protocol_day1_voted_sheriff']}, "
-        f"вторая мафия {overall['protocol_day1_voted_own_mafia']}, "
-        f"дон {overall['protocol_day1_voted_own_don']}, "
-        f"себя {overall['protocol_day1_voted_self']})",
-        flush=True,
-    )
-    print(f"По игрокам: {OUT_SUMMARY}", flush=True)
-    print(f"Итого: {OUT_OVERALL}", flush=True)
-    print("", flush=True)
-    header = (
-        "игрок | мафия | голос | мирные | шериф | 2-я мафия | дон | %мир | %шер | %маф | %дон"
-    )
-    print(header, flush=True)
-    for row in [overall_row, *player_rows]:
-        print(
-            " | ".join(
-                [
-                    fmt(row["poster_nick"]),
-                    fmt(row["mafia_games"]),
-                    fmt(row["games_with_first_vote"]),
-                    fmt(row["voted_civilian"]),
-                    fmt(row["voted_sheriff"]),
-                    fmt(row["voted_own_mafia"]),
-                    fmt(row["voted_own_don"]),
-                    fmt(row["pct_civilian"]),
-                    fmt(row["pct_sheriff"]),
-                    fmt(row["pct_own_mafia"]),
-                    fmt(row["pct_own_don"]),
-                ]
-            ),
-            flush=True,
-        )
+    export_main()
 
 
 if __name__ == "__main__":

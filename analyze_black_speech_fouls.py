@@ -210,58 +210,9 @@ def write_csv(path: Path, rows: list[dict]) -> None:
 
 
 def main() -> None:
-    per_player, overall = analyze()
-    player_rows = [
-        row_from_stats(stats)
-        for _, stats in sorted(per_player.items(), key=lambda item: item[1]["poster_nick"])
-    ]
-    overall_row = row_from_stats(overall, "ALL")
-    write_csv(OUT_SUMMARY, player_rows)
-    write_csv(OUT_OVERALL, [overall_row])
+    from export_analysis_csv import main as export_main
 
-    print(
-        f"Когда наш игрок мафия/дон, фолы на речах (speech + reSpeech); "
-        f"период {DATE_FROM} — {DATE_TO}",
-        flush=True,
-    )
-    print(
-        f"Чёрных игр: {overall['black_games']}; фолов на речах: {overall['speech_fouls']}",
-        flush=True,
-    )
-    other = overall["on_black"] + overall["on_red"]
-    print(
-        f"На своих (мафия/дон, не себя): {overall['on_black']} "
-        f"({pct(overall['on_black'], other)}% от чужих речей)",
-        flush=True,
-    )
-    print(
-        f"На красных (мирный/шериф): {overall['on_red']} "
-        f"({pct(overall['on_red'], other)}% от чужих речей)",
-        flush=True,
-    )
-    print(
-        f"На своей речи: {overall['on_self']}; неизвестно: {overall['on_unknown']}",
-        flush=True,
-    )
-    print(
-        f"Случайная доля на своих была бы ~22.2% (2 из 9 чужих мест).",
-        flush=True,
-    )
-    print(f"По игрокам: {OUT_SUMMARY}", flush=True)
-    print(f"Итого: {OUT_OVERALL}", flush=True)
-    preview_cols = [
-        "poster_nick",
-        "black_games",
-        "speech_fouls",
-        "on_black",
-        "on_red",
-        "on_self",
-        "pct_on_black_vs_red",
-        "pct_on_red_vs_black",
-    ]
-    print("", flush=True)
-    for row in [overall_row, *player_rows]:
-        print(" | ".join(str(row[col]) for col in preview_cols), flush=True)
+    export_main()
 
 
 if __name__ == "__main__":
