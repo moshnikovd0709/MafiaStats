@@ -209,12 +209,60 @@ def download_one(meta: dict) -> tuple[int, dict | None, str | None, str | None]:
 
 def write_index(rows: list[dict]) -> None:
     if not rows:
+        INDEX_CSV.write_text("", encoding="utf-8-sig")
         return
     fieldnames = list(rows[0].keys())
     with INDEX_CSV.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def tracked_ids(players: list[dict]) -> dict[int, str]:
+    return {item["user_id"]: item["poster_nick"] for item in players}
+
+
+def roster_user_ids(payload: dict) -> set[int]:
+    ids: set[int] = set()
+    for item in payload.get("players") or []:
+        if item.get("id") is not None:
+            ids.add(int(item["id"]))
+    for item in (payload.get("data") or {}).get("players") or []:
+        if item.get("player") is not None:
+            ids.add(int(item["player"]))
+    return ids
+
+
+def prune_to_tracked_rosters(games: dict[int, dict], players: list[dict]) -> dict[int, dict]:
+    """Drop matches that got into a profile list but do not include our players at the table."""
+    id_to_nick = tracked_ids(players)
+    kept: dict[int, dict] = {}
+    removed = 0
+    for game_id, meta in games.items():
+        path = GAMES_DIR / f"{game_id}.json"
+        if not path.exists():
+            continue
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        ours = roster_user_ids(payload) & set(id_to_nick)
+        if not ours:
+            path.unlink()
+            removed += 1
+            continue
+        meta["seen_by_ids"] = sorted(ours)
+        meta["seen_by_nicks"] = [id_to_nick[user_id] for user_id in meta["seen_by_ids"]]
+        kept[game_id] = meta
+    print(f"Убрано игр без наших игроков за столом: {removed}; осталось {len(kept)}", flush=True)
+    return kept
+
+
+def rebuild_jsonl() -> int:
+    count = 0
+    with JSONL_PATH.open("w", encoding="utf-8") as handle:
+        for path in sorted(GAMES_DIR.glob("*.json"), key=lambda item: int(item.stem)):
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+            count += 1
+    return count
 
 
 def main() -> None:
@@ -233,6 +281,8 @@ def main() -> None:
 
     index_rows = []
     errors = list(listing_errors)
+    payloads: dict[int, dict] = {}
+    urls: dict[int, str] = {}
     ok = 0
     metas = [games[game_id] for game_id in sorted(games)]
     with ThreadPoolExecutor(max_workers=DOWNLOAD_WORKERS) as pool:
@@ -247,17 +297,33 @@ def main() -> None:
                 print(f"  [fail] {game_id}: {error}", flush=True)
             else:
                 ok += 1
-            index_rows.append(index_row(meta, payload, url, error))
+                if payload is not None:
+                    payloads[game_id] = payload
+                    if url:
+                        urls[game_id] = url
             if done % 50 == 0 or done == len(metas):
-                print(f"Скачано {done}/{len(metas)} (ok={ok}, fail={len(errors)})", flush=True)
+                print(
+                    f"Скачано {done}/{len(metas)} (ok={ok}, fail={len([row for row in errors if 'game_id' in row])})",
+                    flush=True,
+                )
+
+    games = prune_to_tracked_rosters(games, players)
+    for game_id, meta in sorted(games.items()):
+        payload = payloads.get(game_id)
+        if payload is None:
+            payload = json.loads((GAMES_DIR / f"{game_id}.json").read_text(encoding="utf-8"))
+        index_rows.append(
+            index_row(
+                meta,
+                payload,
+                urls.get(game_id) or (payload or {}).get("_source_url"),
+                None,
+            )
+        )
 
     index_rows.sort(key=lambda row: (str(row.get("date_start") or ""), row["game_id"]))
     write_index(index_rows)
-
-    with JSONL_PATH.open("w", encoding="utf-8") as handle:
-        for path in sorted(GAMES_DIR.glob("*.json"), key=lambda item: int(item.stem)):
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    rebuild_jsonl()
 
     if errors:
         with ERRORS_CSV.open("w", encoding="utf-8-sig", newline="") as handle:
@@ -271,8 +337,9 @@ def main() -> None:
         "game_type": "competition",
         "slice": "offline_tournament",
         "tracked_players": len(players),
+        "unique_games_listed": ok,
         "unique_games": len(games),
-        "downloaded_ok": ok,
+        "downloaded_ok": len(games),
         "failed": len([row for row in errors if "game_id" in row]),
         "listing_errors": len(listing_errors),
         "games_dir": str(GAMES_DIR),
