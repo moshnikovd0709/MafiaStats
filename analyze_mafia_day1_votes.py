@@ -11,14 +11,17 @@ from analyze_black_speech_fouls import (
     ROLE_MAFIA,
     ROLE_SHERIFF,
     load_tracked_players,
+    payload_in_period,
 )
+from script import DATE_FROM, DATE_TO
 
 OUT_SUMMARY = Path("data/offline_tournament/analysis_mafia_day1_votes.csv")
 OUT_OVERALL = Path("data/offline_tournament/analysis_mafia_day1_votes_overall.csv")
 
 NOTE = (
-    "Только роль мафия, не дон. Голос = первый кружок голосования "
-    "(votes.num>=1) в первый день, где в протоколе вообще было голосование. "
+    f"Период {DATE_FROM} — {DATE_TO}. Только роль мафия, не дон. "
+    "Голос = первый кружок голосования (votes.num>=1) в первый день, "
+    "где в протоколе вообще было голосование. "
     "В оффлайн-турнирах Polemica в 1-й день голосования почти нет "
     "(zeroVoting=none), поэтому это обычно день 2 после первого отстрела. "
     "Красные = мирные; шериф отдельно; "
@@ -133,6 +136,8 @@ def analyze() -> tuple[dict[int, dict], dict]:
 
     for path in sorted(GAMES_DIR.glob("*.json"), key=lambda item: int(item.stem)):
         payload = json.loads(path.read_text(encoding="utf-8"))
+        if not payload_in_period(payload):
+            continue
         data = payload.get("data") or {}
         inner_players = data.get("players") or []
         by_pos = {

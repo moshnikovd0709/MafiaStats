@@ -233,6 +233,20 @@ def roster_user_ids(payload: dict) -> set[int]:
     return ids
 
 
+def drop_unlisted_games(listed_ids: set[int]) -> int:
+    removed = 0
+    for path in list(GAMES_DIR.glob("*.json")):
+        try:
+            game_id = int(path.stem)
+        except ValueError:
+            continue
+        if game_id not in listed_ids:
+            path.unlink()
+            removed += 1
+    print(f"Убрано игр вне текущего списка/периода: {removed}", flush=True)
+    return removed
+
+
 def prune_to_tracked_rosters(games: dict[int, dict], players: list[dict]) -> dict[int, dict]:
     """Drop matches that got into a profile list but do not include our players at the table."""
     id_to_nick = tracked_ids(players)
@@ -276,6 +290,14 @@ def main() -> None:
     )
     games, listing_errors = collect_game_ids(players)
     print(f"Уникальных игр: {len(games)}", flush=True)
+    if listing_errors:
+        print(
+            f"Список игр получен с ошибками ({len(listing_errors)}); "
+            "файлы вне периода не трогаю, чтобы не потерять игры.",
+            flush=True,
+        )
+    else:
+        drop_unlisted_games(set(games))
 
     from concurrent.futures import ThreadPoolExecutor, as_completed
 

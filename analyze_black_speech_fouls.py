@@ -4,7 +4,7 @@ import csv
 import json
 from pathlib import Path
 
-from script import OUTPUT_OFFLINE_TOURNAMENT_CSV
+from script import DATE_FROM, DATE_TO, OUTPUT_OFFLINE_TOURNAMENT_CSV
 
 GAMES_DIR = Path("data/offline_tournament/games")
 OUT_SUMMARY = Path("data/offline_tournament/analysis_black_speech_fouls.csv")
@@ -24,6 +24,16 @@ ROLE_TITLE = {
     ROLE_CIVILIAN: "civilian",
     ROLE_SHERIFF: "sheriff",
 }
+
+
+def payload_date(payload: dict) -> str:
+    raw = payload.get("started_at") or (payload.get("data") or {}).get("started") or ""
+    return str(raw)[:10]
+
+
+def payload_in_period(payload: dict) -> bool:
+    date = payload_date(payload)
+    return bool(date) and DATE_FROM <= date <= DATE_TO
 
 
 def load_tracked_players() -> dict[int, dict]:
@@ -79,6 +89,8 @@ def analyze() -> tuple[dict[int, dict], dict]:
 
     for path in sorted(GAMES_DIR.glob("*.json"), key=lambda item: int(item.stem)):
         payload = json.loads(path.read_text(encoding="utf-8"))
+        if not payload_in_period(payload):
+            continue
         inner_players = (payload.get("data") or {}).get("players") or []
         by_pos = {int(item["position"]): item for item in inner_players if item.get("position") is not None}
 
@@ -207,7 +219,11 @@ def main() -> None:
     write_csv(OUT_SUMMARY, player_rows)
     write_csv(OUT_OVERALL, [overall_row])
 
-    print("Когда наш игрок мафия/дон, фолы на речах (speech + reSpeech)", flush=True)
+    print(
+        f"Когда наш игрок мафия/дон, фолы на речах (speech + reSpeech); "
+        f"период {DATE_FROM} — {DATE_TO}",
+        flush=True,
+    )
     print(
         f"Чёрных игр: {overall['black_games']}; фолов на речах: {overall['speech_fouls']}",
         flush=True,
