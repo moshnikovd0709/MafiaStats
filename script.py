@@ -15,8 +15,8 @@ OUTPUT_CSV = "polemica_stats.csv"
 OUTPUT_OFFLINE_TOURNAMENT_CSV = "polemica_offline_tournament_stats.csv"
 OUTPUT_NO_OPEN_CSV = "polemica_no_open_stats.csv"
 
-# Статистика за период (примерно последние 9 месяцев)
-DATE_FROM = "2026-01-01"
+# Статистика с 1 сентября 2025
+DATE_FROM = "2025-09-01"
 DATE_TO = "2026-08-27"
 
 HEADERS = {
