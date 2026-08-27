@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import csv
 import json
-from collections import defaultdict
 from pathlib import Path
 
 from analyze_black_speech_fouls import (
@@ -22,7 +21,8 @@ NOTE = (
     "(votes.num>=1) в первый день, где в протоколе вообще было голосование. "
     "В оффлайн-турнирах Polemica в 1-й день голосования почти нет "
     "(zeroVoting=none), поэтому это обычно день 2 после первого отстрела. "
-    "Красные = мирные; шериф отдельно; свои = вторая мафия или дон."
+    "Красные = мирные; шериф отдельно; "
+    "вторая мафия и дон считаются порознь."
 )
 
 
@@ -44,6 +44,8 @@ def empty_stats() -> dict:
         "protocol_day1_voted_civilian": 0,
         "protocol_day1_voted_sheriff": 0,
         "protocol_day1_voted_own_black": 0,
+        "protocol_day1_voted_own_don": 0,
+        "protocol_day1_voted_own_mafia": 0,
         "protocol_day1_voted_self": 0,
         "protocol_day1_no_ballot": 0,
     }
@@ -183,9 +185,16 @@ def analyze() -> tuple[dict[int, dict], dict]:
                 elif bucket == "sheriff":
                     stats["protocol_day1_voted_sheriff"] += 1
                     overall["protocol_day1_voted_sheriff"] += 1
-                elif bucket in {"own_don", "own_mafia"}:
+                elif bucket == "own_don":
                     stats["protocol_day1_voted_own_black"] += 1
                     overall["protocol_day1_voted_own_black"] += 1
+                    stats["protocol_day1_voted_own_don"] += 1
+                    overall["protocol_day1_voted_own_don"] += 1
+                elif bucket == "own_mafia":
+                    stats["protocol_day1_voted_own_black"] += 1
+                    overall["protocol_day1_voted_own_black"] += 1
+                    stats["protocol_day1_voted_own_mafia"] += 1
+                    overall["protocol_day1_voted_own_mafia"] += 1
                 elif bucket == "self":
                     stats["protocol_day1_voted_self"] += 1
                     overall["protocol_day1_voted_self"] += 1
@@ -210,13 +219,15 @@ def row_from_stats(stats: dict, label: str | None = None) -> dict:
         "games_no_first_vote": stats["games_no_vote"],
         "voted_civilian": stats["voted_civilian"],
         "voted_sheriff": stats["voted_sheriff"],
-        "voted_own_black": stats["voted_own_black"],
-        "voted_own_don": stats["voted_own_don"],
         "voted_own_mafia": stats["voted_own_mafia"],
+        "voted_own_don": stats["voted_own_don"],
+        "voted_own_black": stats["voted_own_black"],
         "voted_self": stats["voted_self"],
         "voted_unknown": stats["voted_unknown"],
         "pct_civilian": pct(stats["voted_civilian"], voted),
         "pct_sheriff": pct(stats["voted_sheriff"], voted),
+        "pct_own_mafia": pct(stats["voted_own_mafia"], voted),
+        "pct_own_don": pct(stats["voted_own_don"], voted),
         "pct_own_black": pct(stats["voted_own_black"], voted),
         "pct_red_town": pct(stats["voted_civilian"] + stats["voted_sheriff"], voted),
         "first_vote_on_protocol_day1": stats["first_vote_on_protocol_day1"],
@@ -224,6 +235,8 @@ def row_from_stats(stats: dict, label: str | None = None) -> dict:
         "protocol_day1_ballot_games": stats["protocol_day1_ballot_games"],
         "protocol_day1_voted_civilian": stats["protocol_day1_voted_civilian"],
         "protocol_day1_voted_sheriff": stats["protocol_day1_voted_sheriff"],
+        "protocol_day1_voted_own_mafia": stats["protocol_day1_voted_own_mafia"],
+        "protocol_day1_voted_own_don": stats["protocol_day1_voted_own_don"],
         "protocol_day1_voted_own_black": stats["protocol_day1_voted_own_black"],
         "protocol_day1_voted_self": stats["protocol_day1_voted_self"],
         "protocol_day1_no_ballot": stats["protocol_day1_no_ballot"],
@@ -268,9 +281,12 @@ def main() -> None:
         f"({pct(overall['voted_civilian'], overall['games_with_vote'])}%); "
         f"в шерифа: {overall['voted_sheriff']} "
         f"({pct(overall['voted_sheriff'], overall['games_with_vote'])}%); "
-        f"в своих (мафия/дон): {overall['voted_own_black']} "
-        f"({pct(overall['voted_own_black'], overall['games_with_vote'])}%) "
-        f"[дон {overall['voted_own_don']}, мафия {overall['voted_own_mafia']}]; "
+        f"во вторую мафию: {overall['voted_own_mafia']} "
+        f"({pct(overall['voted_own_mafia'], overall['games_with_vote'])}%); "
+        f"в дона: {overall['voted_own_don']} "
+        f"({pct(overall['voted_own_don'], overall['games_with_vote'])}%); "
+        f"в своих суммарно: {overall['voted_own_black']} "
+        f"({pct(overall['voted_own_black'], overall['games_with_vote'])}%); "
         f"в себя: {overall['voted_self']}",
         flush=True,
     )
@@ -278,7 +294,8 @@ def main() -> None:
         f"Строго протоколный день 1: {overall['protocol_day1_ballot_games']} голосов "
         f"(мирные {overall['protocol_day1_voted_civilian']}, "
         f"шериф {overall['protocol_day1_voted_sheriff']}, "
-        f"свои {overall['protocol_day1_voted_own_black']}, "
+        f"вторая мафия {overall['protocol_day1_voted_own_mafia']}, "
+        f"дон {overall['protocol_day1_voted_own_don']}, "
         f"себя {overall['protocol_day1_voted_self']})",
         flush=True,
     )
@@ -286,7 +303,7 @@ def main() -> None:
     print(f"Итого: {OUT_OVERALL}", flush=True)
     print("", flush=True)
     header = (
-        "игрок | мафия | голос | мирные | шериф | свои | %мир | %шер | %свои | день1"
+        "игрок | мафия | голос | мирные | шериф | 2-я мафия | дон | %мир | %шер | %маф | %дон"
     )
     print(header, flush=True)
     for row in [overall_row, *player_rows]:
@@ -298,11 +315,12 @@ def main() -> None:
                     fmt(row["games_with_first_vote"]),
                     fmt(row["voted_civilian"]),
                     fmt(row["voted_sheriff"]),
-                    fmt(row["voted_own_black"]),
+                    fmt(row["voted_own_mafia"]),
+                    fmt(row["voted_own_don"]),
                     fmt(row["pct_civilian"]),
                     fmt(row["pct_sheriff"]),
-                    fmt(row["pct_own_black"]),
-                    fmt(row["protocol_day1_ballot_games"]),
+                    fmt(row["pct_own_mafia"]),
+                    fmt(row["pct_own_don"]),
                 ]
             ),
             flush=True,
