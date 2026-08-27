@@ -1,0 +1,633 @@
+{
+  "id": 419815,
+  "type": "match",
+  "started_at": "2025-09-12 21:00:00",
+  "ended_at": null,
+  "winnerCode": 0,
+  "updated_at": "2025-09-12 18:57:43",
+  "data": {
+    "started": "2025-09-12T21:00:00.000",
+    "id": 419815,
+    "master": 93963,
+    "referee": {
+      "id": 93963,
+      "username": "Defita_",
+      "avatar": "93963/avatar.webp"
+    },
+    "zeroVoting": "none",
+    "isLive": true,
+    "scoringVersion": "3.0",
+    "num": 27,
+    "phase": 0,
+    "table": 1,
+    "factor": 1,
+    "version": 4,
+    "players": [
+      {
+        "position": 1,
+        "username": "Феодал",
+        "avatar": null,
+        "role": 1,
+        "techs": [],
+        "fouls": [],
+        "player": 35929,
+        "quitTime": "2025-09-12T21:57:43.599130"
+      },
+      {
+        "position": 2,
+        "username": "Stereo",
+        "avatar": "74059/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2025-09-12T21:54:45.570158",
+            "stage": {
+              "type": "speech",
+              "day": 4,
+              "player": 7
+            }
+          }
+        ],
+        "player": 74059
+      },
+      {
+        "position": 3,
+        "username": "Инкогнито",
+        "avatar": "109188/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2025-09-12T21:39:47.554455",
+            "stage": {
+              "type": "speech",
+              "day": 2,
+              "player": 1
+            }
+          }
+        ],
+        "player": 109188
+      },
+      {
+        "position": 4,
+        "username": "Госпожа Julie",
+        "avatar": null,
+        "role": 0,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2025-09-12T21:27:59.520259",
+            "stage": {
+              "type": "shooting",
+              "day": 1
+            }
+          },
+          {
+            "time": "2025-09-12T21:37:45.771321",
+            "stage": {
+              "type": "speech",
+              "day": 2,
+              "player": 9
+            }
+          },
+          {
+            "time": "2025-09-12T21:47:00.346879",
+            "stage": {
+              "type": "speech",
+              "day": 3,
+              "player": 7
+            }
+          }
+        ],
+        "player": 72056,
+        "guess": {
+          "mafs": [
+            9,
+            3
+          ]
+        },
+        "quitTime": "2025-09-12T21:52:51.608863"
+      },
+      {
+        "position": 5,
+        "username": "Вега",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 74136,
+        "guess": {
+          "vice": 9
+        },
+        "quitTime": "2025-09-12T21:43:49.746945"
+      },
+      {
+        "position": 6,
+        "username": "Ленивец",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 50016,
+        "guess": {
+          "mafs": [
+            1,
+            4,
+            10
+          ]
+        },
+        "quitTime": "2025-09-12T21:30:35.101783"
+      },
+      {
+        "position": 7,
+        "username": "Sirena13",
+        "avatar": "81739/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2025-09-12T21:17:18.590584",
+            "stage": {
+              "type": "speech",
+              "day": 1,
+              "player": 1
+            }
+          }
+        ],
+        "player": 81739
+      },
+      {
+        "position": 8,
+        "username": "pochemyyazdes",
+        "avatar": "100525/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 100525,
+        "guess": {
+          "mafs": [
+            1
+          ]
+        },
+        "quitTime": "2025-09-12T21:54:39.412204"
+      },
+      {
+        "position": 9,
+        "username": "avomarika",
+        "avatar": "60805/avatar.webp",
+        "role": 3,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2025-09-12T21:38:54.536688",
+            "stage": {
+              "type": "speech",
+              "day": 2,
+              "player": 10
+            }
+          },
+          {
+            "time": "2025-09-12T21:46:48.629647",
+            "stage": {
+              "type": "speech",
+              "day": 3,
+              "player": 7
+            }
+          }
+        ],
+        "player": 60805
+      },
+      {
+        "position": 10,
+        "username": "StronGlav",
+        "avatar": "60904/avatar.webp",
+        "role": 1,
+        "techs": [],
+        "fouls": [],
+        "player": 60904,
+        "guess": {
+          "vice": 4
+        },
+        "quitTime": "2025-09-12T21:41:23.883654"
+      }
+    ],
+    "stage": {
+      "type": "gameOver",
+      "day": 4
+    },
+    "checks": [
+      {
+        "night": 1,
+        "role": 0,
+        "player": 6
+      },
+      {
+        "night": 2,
+        "role": 0,
+        "player": 8
+      },
+      {
+        "night": 1,
+        "role": 3,
+        "player": 10
+      },
+      {
+        "night": 2,
+        "role": 3,
+        "player": 7
+      },
+      {
+        "night": 3,
+        "role": 3,
+        "player": 1
+      }
+    ],
+    "shots": [
+      {
+        "night": 1,
+        "shooter": 1,
+        "victim": 6
+      },
+      {
+        "night": 1,
+        "shooter": 4,
+        "victim": 6
+      },
+      {
+        "night": 1,
+        "shooter": 10,
+        "victim": 6
+      },
+      {
+        "night": 2,
+        "shooter": 1,
+        "victim": 5
+      },
+      {
+        "night": 2,
+        "shooter": 4,
+        "victim": 5
+      },
+      {
+        "night": 3,
+        "shooter": 1,
+        "victim": 8
+      }
+    ],
+    "votes": [
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 2,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 4,
+        "candidate": 8
+      },
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 10,
+        "candidate": 3
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 1,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 2,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 3,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 4,
+        "candidate": 8
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 5,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 7,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 8,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 9,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 10,
+        "candidate": 8
+      },
+      {
+        "day": 3,
+        "num": 0,
+        "voter": 3,
+        "candidate": 4
+      },
+      {
+        "day": 3,
+        "num": 0,
+        "voter": 4,
+        "candidate": 9
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 1,
+        "candidate": 9
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 2,
+        "candidate": 4
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 3,
+        "candidate": 4
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 4,
+        "candidate": 9
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 7,
+        "candidate": 4
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 8,
+        "candidate": 4
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 9,
+        "candidate": 4
+      },
+      {
+        "day": 4,
+        "num": 0,
+        "voter": 1,
+        "candidate": 9
+      },
+      {
+        "day": 4,
+        "num": 0,
+        "voter": 7,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 1,
+        "candidate": 9
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 2,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 3,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 7,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 9,
+        "candidate": 1
+      }
+    ],
+    "bonuses": [],
+    "timing": [
+      null,
+      "2025-09-12T21:27:52.462469",
+      null,
+      "2025-09-12T21:41:23.883647",
+      null,
+      "2025-09-12T21:52:51.608860"
+    ],
+    "comKiller": 4,
+    "result": 0
+  },
+  "judge": {
+    "id": 93963,
+    "username": "Defita_"
+  },
+  "players": [
+    {
+      "id": 35929,
+      "username": "Феодал",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 1,
+      "role_val": 1,
+      "points": 0,
+      "quit_index": 7,
+      "w_l": "lose",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 74059,
+      "username": "Stereo",
+      "image": "/image/user-avatar?file_name=74059%2Favatar.webp&size=100x",
+      "tablePosition": 2,
+      "role_val": 2,
+      "points": 1.6,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 109188,
+      "username": "Инкогнито",
+      "image": "/image/user-avatar?file_name=109188%2Favatar.webp&size=100x",
+      "tablePosition": 3,
+      "role_val": 2,
+      "points": 1.6,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 72056,
+      "username": "Госпожа Julie",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 4,
+      "role_val": 0,
+      "points": 0,
+      "quit_index": 5,
+      "w_l": "lose",
+      "role": {
+        "type": "godfather",
+        "title": "Дон"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 74136,
+      "username": "Вега",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 5,
+      "role_val": 2,
+      "points": 1.6,
+      "quit_index": 4,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 50016,
+      "username": "Ленивец",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 6,
+      "role_val": 2,
+      "points": 2,
+      "quit_index": 2,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 81739,
+      "username": "Sirena13",
+      "image": "/image/user-avatar?file_name=81739%2Favatar.webp&size=100x",
+      "tablePosition": 7,
+      "role_val": 2,
+      "points": 1.6,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 100525,
+      "username": "pochemyyazdes",
+      "image": "/image/user-avatar?file_name=100525%2Favatar.webp&size=100x",
+      "tablePosition": 8,
+      "role_val": 2,
+      "points": 1.6,
+      "quit_index": 6,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 60805,
+      "username": "avomarika",
+      "image": "/image/user-avatar?file_name=60805%2Favatar.webp&size=100x",
+      "tablePosition": 9,
+      "role_val": 3,
+      "points": 1.6,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "sheriff",
+        "title": "Шериф"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 60904,
+      "username": "StronGlav",
+      "image": "/image/user-avatar?file_name=60904%2Favatar.webp&size=100x",
+      "tablePosition": 10,
+      "role_val": 1,
+      "points": -0.1,
+      "quit_index": 3,
+      "w_l": "lose",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    }
+  ],
+  "firstKilled": 50016,
+  "bestPlayer": {
+    "id": 50016,
+    "username": "Ленивец",
+    "image": "/image/user-avatar?size=100x",
+    "tablePosition": 6,
+    "role_val": 2,
+    "points": 2,
+    "quit_index": 2,
+    "w_l": "win",
+    "role": {
+      "type": "civilian",
+      "title": "Мирный"
+    },
+    "mmr_diff": null
+  },
+  "_source_url": "https://polemicagame.com/match/419815"
+}
