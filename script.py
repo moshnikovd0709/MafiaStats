@@ -13,6 +13,7 @@ BASE_URL = "https://polemicagame.com"
 APP_API_URL = "https://app.polemicagame.com"
 OUTPUT_CSV = "polemica_stats.csv"
 OUTPUT_OFFLINE_TOURNAMENT_CSV = "polemica_offline_tournament_stats.csv"
+OUTPUT_NO_OPEN_CSV = "polemica_no_open_stats.csv"
 
 # Статистика за период (примерно последние 9 месяцев)
 DATE_FROM = "2026-01-01"
@@ -157,15 +158,34 @@ ROLES = (
 # Как в фильтрах профиля Polemica:
 # competition = оффлайн-турниры, tournament = онлайн-турниры,
 # league / lobby / club = не турнир (онлайн).
+# lobby = открытые/фановые столы.
 GAME_TYPES = ("league", "lobby", "club", "competition", "tournament")
 SCORINGS = ("scoring_1", "scoring_2", "scoring_3")
 OFFLINE_TOURNAMENT_TYPE = "competition"
+OPEN_GAME_TYPE = "lobby"
+NO_OPEN_GAME_TYPES = ("league", "club", "competition", "tournament")
 SLICE_TYPES = {
     "all_tournament": ("competition", "tournament"),
     "non_tournament": ("league", "lobby", "club"),
     "online": ("league", "lobby", "club", "tournament"),
     "offline": ("competition",),
+    "open": ("lobby",),
+    "no_open": NO_OPEN_GAME_TYPES,
 }
+SLICE_EXPORTS = (
+    {
+        "path": OUTPUT_OFFLINE_TOURNAMENT_CSV,
+        "slice": "offline_tournament",
+        "slice_label": "Оффлайн турниры",
+        "game_type": OFFLINE_TOURNAMENT_TYPE,
+    },
+    {
+        "path": OUTPUT_NO_OPEN_CSV,
+        "slice": "no_open",
+        "slice_label": "Без лобби (открытых/фановых игр)",
+        "game_type": ",".join(NO_OPEN_GAME_TYPES),
+    },
+)
 
 
 def unwrap_totals(data) -> dict:
@@ -475,13 +495,20 @@ def build_record(poster_nick: str, player: dict | None) -> dict:
     return record
 
 
-def build_offline_tournament_record(poster_nick: str, player: dict | None) -> dict:
+def build_slice_record(
+    poster_nick: str,
+    player: dict | None,
+    *,
+    slice_name: str,
+    slice_label: str,
+    game_type: str,
+) -> dict:
     record = identity_record(poster_nick)
     record.update(
         {
-            "slice": "offline_tournament",
-            "slice_label": "Оффлайн турниры",
-            "game_type": OFFLINE_TOURNAMENT_TYPE,
+            "slice": slice_name,
+            "slice_label": slice_label,
+            "game_type": game_type,
         }
     )
     if not player:
@@ -493,7 +520,7 @@ def build_offline_tournament_record(poster_nick: str, player: dict | None) -> di
         record,
         fetch_player_bundle(
             player["user_id"],
-            {"game_type": OFFLINE_TOURNAMENT_TYPE},
+            {"game_type": game_type},
             include_types=False,
             include_achievements=False,
         ),
@@ -555,7 +582,7 @@ def main():
         print(f"[Warning] Рейтинг федерации недоступен: {exc}", flush=True)
 
     records = []
-    offline_records = []
+    slice_records = {item["slice"]: [] for item in SLICE_EXPORTS}
     for nick in POSTER_NICKS:
         player = known.get(nick)
         if player:
@@ -565,11 +592,18 @@ def main():
         general = build_record(nick, player)
         records.append(general)
         time.sleep(0.35)
-        offline = build_offline_tournament_record(nick, player)
-        offline["achievements_count"] = general.get("achievements_count")
-        offline["achievements"] = general.get("achievements")
-        offline_records.append(offline)
-        time.sleep(0.35)
+        for item in SLICE_EXPORTS:
+            sliced = build_slice_record(
+                nick,
+                player,
+                slice_name=item["slice"],
+                slice_label=item["slice_label"],
+                game_type=item["game_type"],
+            )
+            sliced["achievements_count"] = general.get("achievements_count")
+            sliced["achievements"] = general.get("achievements")
+            slice_records[item["slice"]].append(sliced)
+            time.sleep(0.35)
 
     df = pd.DataFrame(records)
     df.to_csv(OUTPUT_CSV, index=False, encoding="utf-8-sig")
@@ -583,21 +617,17 @@ def main():
         "non_tournament_games",
         "online_games",
         "offline_games",
+        "open_games",
+        "no_open_games",
         "competition_games",
         "tournament_games",
+        "lobby_games",
         "fed_scores",
         "error",
     ]
     print(df[preview_cols].to_string(index=False))
 
-    offline_df = pd.DataFrame(offline_records)
-    offline_df.to_csv(OUTPUT_OFFLINE_TOURNAMENT_CSV, index=False, encoding="utf-8-sig")
-    offline_found = offline_df["user_id"].notna().sum()
-    print(
-        f"\nСохранено {offline_found}/{len(offline_df)} игроков в «{OUTPUT_OFFLINE_TOURNAMENT_CSV}»",
-        flush=True,
-    )
-    offline_preview = [
+    slice_preview = [
         "poster_nick",
         "games",
         "winrate",
@@ -608,7 +638,15 @@ def main():
         "don_avg_score",
         "error",
     ]
-    print(offline_df[offline_preview].to_string(index=False))
+    for item in SLICE_EXPORTS:
+        sliced_df = pd.DataFrame(slice_records[item["slice"]])
+        sliced_df.to_csv(item["path"], index=False, encoding="utf-8-sig")
+        sliced_found = sliced_df["user_id"].notna().sum()
+        print(
+            f"\nСохранено {sliced_found}/{len(sliced_df)} игроков в «{item['path']}»",
+            flush=True,
+        )
+        print(sliced_df[slice_preview].to_string(index=False))
 
 
 if __name__ == "__main__":
