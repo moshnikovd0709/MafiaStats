@@ -191,6 +191,13 @@ def export_all() -> dict:
         for _, stats in sorted(check_per.items(), key=lambda item: item[1]["poster_nick"])
     ]
     check_all = with_period(check_row(check_overall, "ALL"))
+    check_players.sort(
+        key=lambda row: (
+            row["pct_sheriff_n1_on_mafia"] is None,
+            -(row["pct_sheriff_n1_on_mafia"] or 0),
+            row["poster_nick"],
+        )
+    )
 
     write_csv(FOULS_SUMMARY, foul_players)
     write_csv(FOULS_OVERALL, [foul_all])
