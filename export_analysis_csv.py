@@ -23,6 +23,13 @@ from analyze_sheriff_n1_black_checks import (
     analyze as analyze_checks,
     row_from_stats as check_row,
 )
+from analyze_ugadayka import (
+    OUT_OVERALL as UGA_OVERALL,
+    OUT_SUMMARY as UGA_SUMMARY,
+    analyze as analyze_uga,
+    row_from_stats as uga_row,
+    sort_rows as uga_sort,
+)
 from analyze_mafia_day1_votes import (
     OUT_OVERALL as VOTES_OVERALL,
     OUT_SUMMARY as VOTES_SUMMARY,
@@ -35,6 +42,7 @@ ROOT_VOTES_CSV = Path("polemica_mafia_first_votes.csv")
 ROOT_FOULS_CSV = Path("polemica_black_speech_fouls.csv")
 ROOT_CIV_CSV = Path("polemica_civilian_first_votes.csv")
 ROOT_CHECK_CSV = Path("polemica_sheriff_n1_black_checks.csv")
+ROOT_UGA_CSV = Path("polemica_ugadayka.csv")
 ROOT_COMBINED_CSV = Path("polemica_offline_tournament_analysis.csv")
 
 RENAME_FOR_OFFLINE = {
@@ -67,6 +75,16 @@ RENAME_FOR_OFFLINE = {
     "civ_pct_black": "civ_first_vote_pct_black",
     "sheriff_n1_checked": "sheriff_n1_checked_mafia",
     "pct_sheriff_n1_on_mafia": "sheriff_n1_pct_on_mafia",
+    "ugadayka_games": "ugadayka_games",
+    "ugadayka_wins": "ugadayka_wins",
+    "ugadayka_losses": "ugadayka_losses",
+    "pct_ugadayka_win": "ugadayka_win_pct",
+    "as_mafia": "ugadayka_as_mafia",
+    "as_don": "ugadayka_as_don",
+    "day_games": "ugadayka_day_games",
+    "day_wins": "ugadayka_day_wins",
+    "night_games": "ugadayka_night_games",
+    "night_wins": "ugadayka_night_wins",
 }
 
 
@@ -84,10 +102,17 @@ def with_period(row: dict) -> dict:
     return out
 
 
-def build_combined_row(vote: dict, foul: dict | None, civ: dict | None, check: dict | None) -> dict:
+def build_combined_row(
+    vote: dict,
+    foul: dict | None,
+    civ: dict | None,
+    check: dict | None,
+    uga: dict | None = None,
+) -> dict:
     foul = foul or {}
     civ = civ or {}
     check = check or {}
+    uga = uga or {}
     return {
         "date_from": DATE_FROM,
         "date_to": DATE_TO,
@@ -133,6 +158,16 @@ def build_combined_row(vote: dict, foul: dict | None, civ: dict | None, check: d
         "speech_pct_on_red": foul.get("pct_on_red_vs_black"),
         "sheriff_n1_checked": check.get("sheriff_n1_checked"),
         "pct_sheriff_n1_on_mafia": check.get("pct_sheriff_n1_on_mafia"),
+        "ugadayka_games": uga.get("ugadayka_games"),
+        "ugadayka_wins": uga.get("ugadayka_wins"),
+        "ugadayka_losses": uga.get("ugadayka_losses"),
+        "pct_ugadayka_win": uga.get("pct_ugadayka_win"),
+        "as_mafia": uga.get("as_mafia"),
+        "as_don": uga.get("as_don"),
+        "day_games": uga.get("day_games"),
+        "day_wins": uga.get("day_wins"),
+        "night_games": uga.get("night_games"),
+        "night_wins": uga.get("night_wins"),
     }
 
 
@@ -170,6 +205,7 @@ def export_all() -> dict:
     votes_per, votes_overall = analyze_votes()
     civ_per, civ_overall = analyze_civ()
     check_per, check_overall = analyze_checks()
+    uga_per, uga_overall = analyze_uga()
 
     foul_players = [
         with_period(fouls_row(stats))
@@ -198,6 +234,12 @@ def export_all() -> dict:
             row["poster_nick"],
         )
     )
+    uga_players = [
+        with_period(uga_row(stats))
+        for _, stats in sorted(uga_per.items(), key=lambda item: item[1]["poster_nick"])
+    ]
+    uga_all = with_period(uga_row(uga_overall, "ALL"))
+    uga_players = uga_sort(uga_players)
 
     write_csv(FOULS_SUMMARY, foul_players)
     write_csv(FOULS_OVERALL, [foul_all])
@@ -215,15 +257,21 @@ def export_all() -> dict:
     write_csv(CHECK_OVERALL, [check_all])
     write_csv(ROOT_CHECK_CSV, [check_all, *check_players])
 
+    write_csv(UGA_SUMMARY, uga_players)
+    write_csv(UGA_OVERALL, [uga_all])
+    write_csv(ROOT_UGA_CSV, [uga_all, *uga_players])
+
     fouls_by_nick = {row["poster_nick"]: row for row in [foul_all, *foul_players]}
     civ_by_nick = {row["poster_nick"]: row for row in [civ_all, *civ_players]}
     check_by_nick = {row["poster_nick"]: row for row in [check_all, *check_players]}
+    uga_by_nick = {row["poster_nick"]: row for row in [uga_all, *uga_players]}
     combined = [
         build_combined_row(
             vote,
             fouls_by_nick.get(vote["poster_nick"]),
             civ_by_nick.get(vote["poster_nick"]),
             check_by_nick.get(vote["poster_nick"]),
+            uga_by_nick.get(vote["poster_nick"]),
         )
         for vote in [vote_all, *vote_players]
     ]
@@ -235,42 +283,51 @@ def export_all() -> dict:
         "fouls": (foul_players, foul_all, fouls_overall),
         "civ": (civ_players, civ_all, civ_overall),
         "checks": (check_players, check_all, check_overall),
+        "ugadayka": (uga_players, uga_all, uga_overall),
         "combined": combined,
     }
 
 
 def main() -> None:
     from analyze_mafia_day1_votes import fmt
-    from analyze_sheriff_n1_black_checks import NOTE as CHECK_NOTE
+    from analyze_ugadayka import NOTE as UGA_NOTE
 
     result = export_all()
-    check_players, check_all, check_overall = result["checks"]
+    uga_players, uga_all, uga_overall = result["ugadayka"]
+    unique_games = uga_overall["unique_games"]
+    unique_wins = uga_overall["unique_wins"]
+    unique_pct = round(100.0 * unique_wins / unique_games, 1) if unique_games else None
 
     print(
-        f"Когда наш игрок именно мафия (не дон): проверка шерифа в первую ночь; "
+        f"Угадайка: трое за столом, наш игрок живой чёрный (мафия/дон); "
         f"период {DATE_FROM} — {DATE_TO}",
         flush=True,
     )
-    print(CHECK_NOTE, flush=True)
+    print(UGA_NOTE, flush=True)
     print(
-        f"Мафийных посадок: {check_overall['mafia_games']}; "
-        f"шериф ткнул в первую ночь: {check_overall['checked_n1']} "
-        f"({check_all['pct_sheriff_n1_on_mafia']}%)",
+        f"Партий с угадайкой: {unique_games}; "
+        f"чёрные выиграли {unique_wins} ({unique_pct}% по всем партиям). "
+        f"Посадки наших: {uga_all['ugadayka_games']}, "
+        f"победы {uga_all['ugadayka_wins']} ({uga_all['pct_ugadayka_win']}%)",
         flush=True,
     )
-    print(f"CSV: {ROOT_CHECK_CSV}", flush=True)
+    print(f"CSV: {ROOT_UGA_CSV}", flush=True)
     print(f"CSV всё вместе: {ROOT_COMBINED_CSV}", flush=True)
     print("", flush=True)
-    header = "игрок | мафия | ткнул N1 | %"
+    header = "игрок | угадайки | победы | % | мафия | дон | день | ночь"
     print(header, flush=True)
-    for row in [check_all, *check_players]:
+    for row in [uga_all, *uga_players]:
         print(
             " | ".join(
                 [
                     fmt(row["poster_nick"]),
-                    fmt(row["mafia_games"]),
-                    fmt(row["sheriff_n1_checked"]),
-                    fmt(row["pct_sheriff_n1_on_mafia"]),
+                    fmt(row["ugadayka_games"]),
+                    fmt(row["ugadayka_wins"]),
+                    fmt(row["pct_ugadayka_win"]),
+                    fmt(row["as_mafia"]),
+                    fmt(row["as_don"]),
+                    f"{fmt(row['day_wins'])}/{fmt(row['day_games'])}",
+                    f"{fmt(row['night_wins'])}/{fmt(row['night_games'])}",
                 ]
             ),
             flush=True,
