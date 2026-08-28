@@ -146,12 +146,12 @@ def row_from_stats(stats: dict, label: str | None = None, red: bool = False) -> 
         "user_id": stats.get("user_id") or "",
         "games": games,
         "games_with_first_vote_out": stats["games_with_first_vote_out"],
-        "first_voted": first,
         "pct_first_voted": pct(first, games),
         "as_civilian": stats["as_civilian"],
         "as_sheriff": stats["as_sheriff"],
     }
     if not red:
+        row["first_voted"] = first
         row["as_mafia"] = stats["as_mafia"]
         row["as_don"] = stats["as_don"]
     row.update(
@@ -179,7 +179,8 @@ def sort_rows(rows: list[dict]) -> list[dict]:
         key=lambda row: (
             row["pct_first_voted"] is None,
             -(row["pct_first_voted"] or 0),
-            -(row["first_voted"] or 0),
+            -(row.get("first_voted") or 0),
+            -((row.get("as_civilian") or 0) + (row.get("as_sheriff") or 0)),
             -(row["games"] or 0),
             row["poster_nick"],
         ),

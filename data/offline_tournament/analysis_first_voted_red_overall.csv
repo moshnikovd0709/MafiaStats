@@ -1,2 +1,2 @@
-﻿date_from,date_to,poster_nick,polemica_nick,user_id,games,games_with_first_vote_out,first_voted,pct_first_voted,as_civilian,as_sheriff,day2,day3plus,solo_elim,multi_elim,naive_random_pct,unique_games,unique_with_vote_out
-2026-01-01,2026-08-27,ALL,,,1991,1910,164,8.2,144,20,157,7,140,24,11.1,1226,1165
+﻿date_from,date_to,poster_nick,polemica_nick,user_id,games,games_with_first_vote_out,pct_first_voted,as_civilian,as_sheriff,day2,day3plus,solo_elim,multi_elim,naive_random_pct,unique_games,unique_with_vote_out
+2026-01-01,2026-08-27,ALL,,,1991,1910,8.2,144,20,157,7,140,24,11.1,1226,1165

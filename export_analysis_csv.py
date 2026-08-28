@@ -102,7 +102,6 @@ RENAME_FOR_OFFLINE = {
     "first_voted": "first_voted_out",
     "pct_first_voted": "first_voted_pct",
     "red_games": "first_voted_red_games",
-    "red_first_voted": "first_voted_red",
     "red_pct_first_voted": "first_voted_red_pct",
     "red_as_civilian": "first_voted_red_civilian",
     "red_as_sheriff": "first_voted_red_sheriff",
@@ -204,7 +203,6 @@ def build_combined_row(
         "first_voted_day2": first.get("day2"),
         "first_voted_day3plus": first.get("day3plus"),
         "red_games": first_red.get("games"),
-        "red_first_voted": first_red.get("first_voted"),
         "red_pct_first_voted": first_red.get("pct_first_voted"),
         "red_as_civilian": first_red.get("as_civilian"),
         "red_as_sheriff": first_red.get("as_sheriff"),
@@ -228,6 +226,7 @@ def merge_into_offline_csv(combined_rows: list[dict]) -> None:
         "sheriff_n1_checked_as_mafia",
         "sheriff_n1_checked_as_don",
         "sheriff_n1_pct_on_black",
+        "first_voted_red",
     ]
     drop_cols = [
         col
@@ -370,15 +369,14 @@ def main() -> None:
     )
     print(FIRST_RED_NOTE, flush=True)
     print(
-        f"Красные посадки наших: {first_all['games']}, "
-        f"первый на голосовании: {first_all['first_voted']} "
-        f"({first_all['pct_first_voted']}%)",
+        f"Красные посадки наших: {first_all['games']}; "
+        f"доля первых вылетов голосованием: {first_all['pct_first_voted']}%",
         flush=True,
     )
     print(f"CSV: {ROOT_FIRST_RED_CSV}", flush=True)
     print(f"CSV всё вместе: {ROOT_COMBINED_CSV}", flush=True)
     print("", flush=True)
-    header = "игрок | красные | первый вылет | % | мирный | шериф"
+    header = "игрок | красные | % | мирный | шериф"
     print(header, flush=True)
     for row in [first_all, *first_players]:
         print(
@@ -386,7 +384,6 @@ def main() -> None:
                 [
                     fmt(row["poster_nick"]),
                     fmt(row["games"]),
-                    fmt(row["first_voted"]),
                     fmt(row["pct_first_voted"]),
                     fmt(row["as_civilian"]),
                     fmt(row["as_sheriff"]),
