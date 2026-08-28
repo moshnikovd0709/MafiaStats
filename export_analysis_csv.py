@@ -11,6 +11,12 @@ from analyze_black_speech_fouls import (
     analyze as analyze_fouls,
     row_from_stats as fouls_row,
 )
+from analyze_civilian_first_votes import (
+    OUT_OVERALL as CIV_OVERALL,
+    OUT_SUMMARY as CIV_SUMMARY,
+    analyze as analyze_civ,
+    row_from_stats as civ_row,
+)
 from analyze_mafia_day1_votes import (
     OUT_OVERALL as VOTES_OVERALL,
     OUT_SUMMARY as VOTES_SUMMARY,
@@ -21,6 +27,7 @@ from script import DATE_FROM, DATE_TO, OUTPUT_OFFLINE_TOURNAMENT_CSV
 
 ROOT_VOTES_CSV = Path("polemica_mafia_first_votes.csv")
 ROOT_FOULS_CSV = Path("polemica_black_speech_fouls.csv")
+ROOT_CIV_CSV = Path("polemica_civilian_first_votes.csv")
 ROOT_COMBINED_CSV = Path("polemica_offline_tournament_analysis.csv")
 
 RENAME_FOR_OFFLINE = {
@@ -42,6 +49,18 @@ RENAME_FOR_OFFLINE = {
     "black_games": "protocol_black_games",
     "don_games": "protocol_don_games",
     "games_with_speech_foul": "speech_games_with_foul",
+    "civilian_games": "civ_games",
+    "civ_games_with_first_vote": "civ_first_vote_games",
+    "civ_games_no_first_vote": "civ_first_vote_no_vote",
+    "civ_voted_sheriff": "civ_first_vote_sheriff",
+    "civ_voted_civilian": "civ_first_vote_civilian",
+    "civ_voted_don": "civ_first_vote_don",
+    "civ_voted_mafia": "civ_first_vote_mafia",
+    "civ_voted_black": "civ_first_vote_black",
+    "civ_voted_self": "civ_first_vote_self",
+    "civ_pct_sheriff": "civ_first_vote_pct_sheriff",
+    "civ_pct_civilian": "civ_first_vote_pct_civilian",
+    "civ_pct_black": "civ_first_vote_pct_black",
 }
 
 
@@ -59,14 +78,15 @@ def with_period(row: dict) -> dict:
     return out
 
 
-def build_combined_row(vote: dict, foul: dict | None) -> dict:
+def build_combined_row(vote: dict, foul: dict | None, civ: dict | None) -> dict:
     foul = foul or {}
+    civ = civ or {}
     return {
         "date_from": DATE_FROM,
         "date_to": DATE_TO,
         "poster_nick": vote["poster_nick"],
-        "polemica_nick": vote.get("polemica_nick") or foul.get("polemica_nick") or "",
-        "user_id": vote.get("user_id") or foul.get("user_id") or "",
+        "polemica_nick": vote.get("polemica_nick") or foul.get("polemica_nick") or civ.get("polemica_nick") or "",
+        "user_id": vote.get("user_id") or foul.get("user_id") or civ.get("user_id") or "",
         "mafia_games": vote.get("mafia_games"),
         "games_with_first_vote": vote.get("games_with_first_vote"),
         "games_no_first_vote": vote.get("games_no_first_vote"),
@@ -82,6 +102,18 @@ def build_combined_row(vote: dict, foul: dict | None) -> dict:
         "pct_own_don": vote.get("pct_own_don"),
         "pct_own_black": vote.get("pct_own_black"),
         "pct_red_town": vote.get("pct_red_town"),
+        "civilian_games": civ.get("civilian_games"),
+        "civ_games_with_first_vote": civ.get("games_with_first_vote"),
+        "civ_games_no_first_vote": civ.get("games_no_first_vote"),
+        "civ_voted_sheriff": civ.get("voted_sheriff"),
+        "civ_voted_civilian": civ.get("voted_civilian"),
+        "civ_voted_don": civ.get("voted_don"),
+        "civ_voted_mafia": civ.get("voted_mafia"),
+        "civ_voted_black": civ.get("voted_black"),
+        "civ_voted_self": civ.get("voted_self"),
+        "civ_pct_sheriff": civ.get("pct_sheriff"),
+        "civ_pct_civilian": civ.get("pct_civilian"),
+        "civ_pct_black": civ.get("pct_black"),
         "black_games": foul.get("black_games"),
         "don_games": foul.get("don_games"),
         "games_with_speech_foul": foul.get("games_with_speech_foul"),
@@ -117,6 +149,7 @@ def merge_into_offline_csv(combined_rows: list[dict]) -> None:
 def export_all() -> dict:
     fouls_per, fouls_overall = analyze_fouls()
     votes_per, votes_overall = analyze_votes()
+    civ_per, civ_overall = analyze_civ()
 
     foul_players = [
         with_period(fouls_row(stats))
@@ -128,6 +161,11 @@ def export_all() -> dict:
         for _, stats in sorted(votes_per.items(), key=lambda item: item[1]["poster_nick"])
     ]
     vote_all = with_period(votes_row(votes_overall, "ALL"))
+    civ_players = [
+        with_period(civ_row(stats))
+        for _, stats in sorted(civ_per.items(), key=lambda item: item[1]["poster_nick"])
+    ]
+    civ_all = with_period(civ_row(civ_overall, "ALL"))
 
     write_csv(FOULS_SUMMARY, foul_players)
     write_csv(FOULS_OVERALL, [foul_all])
@@ -137,9 +175,18 @@ def export_all() -> dict:
     write_csv(VOTES_OVERALL, [vote_all])
     write_csv(ROOT_VOTES_CSV, [vote_all, *vote_players])
 
+    write_csv(CIV_SUMMARY, civ_players)
+    write_csv(CIV_OVERALL, [civ_all])
+    write_csv(ROOT_CIV_CSV, [civ_all, *civ_players])
+
     fouls_by_nick = {row["poster_nick"]: row for row in [foul_all, *foul_players]}
+    civ_by_nick = {row["poster_nick"]: row for row in [civ_all, *civ_players]}
     combined = [
-        build_combined_row(vote, fouls_by_nick.get(vote["poster_nick"]))
+        build_combined_row(
+            vote,
+            fouls_by_nick.get(vote["poster_nick"]),
+            civ_by_nick.get(vote["poster_nick"]),
+        )
         for vote in [vote_all, *vote_players]
     ]
     write_csv(ROOT_COMBINED_CSV, combined)
@@ -148,68 +195,54 @@ def export_all() -> dict:
     return {
         "votes": (vote_players, vote_all, votes_overall),
         "fouls": (foul_players, foul_all, fouls_overall),
+        "civ": (civ_players, civ_all, civ_overall),
         "combined": combined,
     }
 
 
 def main() -> None:
-    from analyze_black_speech_fouls import pct as fouls_pct
-    from analyze_mafia_day1_votes import NOTE, fmt, pct
+    from analyze_mafia_day1_votes import fmt, pct
+    from analyze_civilian_first_votes import NOTE as CIV_NOTE
 
     result = export_all()
-    _, _, fouls_overall = result["fouls"]
-    vote_players, vote_all, votes_overall = result["votes"]
+    civ_players, civ_all, civ_overall = result["civ"]
 
     print(
-        f"Когда наш игрок мафия/дон, фолы на речах; период {DATE_FROM} — {DATE_TO}",
+        f"Когда наш игрок мирный (не шериф): первый голос в шерифа; "
+        f"период {DATE_FROM} — {DATE_TO}",
         flush=True,
     )
-    other = fouls_overall["on_black"] + fouls_overall["on_red"]
+    print(CIV_NOTE, flush=True)
+    voted = civ_overall["games_with_vote"]
     print(
-        f"Чёрных игр: {fouls_overall['black_games']}; фолов: {fouls_overall['speech_fouls']}; "
-        f"на своих {fouls_overall['on_black']} ({fouls_pct(fouls_overall['on_black'], other)}%); "
-        f"на красных {fouls_overall['on_red']} ({fouls_pct(fouls_overall['on_red'], other)}%)",
+        f"Мирных посадок: {civ_overall['civilian_games']}; "
+        f"с голосом: {voted}; без голоса: {civ_overall['games_no_vote']}",
         flush=True,
     )
-    print(f"CSV: {ROOT_FOULS_CSV}", flush=True)
-    print("", flush=True)
-    print("Когда наш игрок именно мафия (не дон): куда уходит первый голос", flush=True)
-    print(NOTE, flush=True)
     print(
-        f"Мафийных посадок: {votes_overall['mafia_games']}; "
-        f"с голосом: {votes_overall['games_with_vote']}; "
-        f"без голоса: {votes_overall['games_no_vote']}",
+        f"В шерифа: {civ_overall['voted_sheriff']} ({pct(civ_overall['voted_sheriff'], voted)}%); "
+        f"в мирных: {civ_overall['voted_civilian']} ({pct(civ_overall['voted_civilian'], voted)}%); "
+        f"в чёрных: {civ_overall['voted_black']} ({pct(civ_overall['voted_black'], voted)}%) "
+        f"[дон {civ_overall['voted_don']}, мафия {civ_overall['voted_mafia']}]; "
+        f"в себя: {civ_overall['voted_self']}",
         flush=True,
     )
-    voted = votes_overall["games_with_vote"]
-    print(
-        f"В мирных: {votes_overall['voted_civilian']} ({pct(votes_overall['voted_civilian'], voted)}%); "
-        f"в шерифа: {votes_overall['voted_sheriff']} ({pct(votes_overall['voted_sheriff'], voted)}%); "
-        f"во вторую мафию: {votes_overall['voted_own_mafia']} ({pct(votes_overall['voted_own_mafia'], voted)}%); "
-        f"в дона: {votes_overall['voted_own_don']} ({pct(votes_overall['voted_own_don'], voted)}%)",
-        flush=True,
-    )
-    print(f"CSV голосов: {ROOT_VOTES_CSV}", flush=True)
+    print(f"CSV: {ROOT_CIV_CSV}", flush=True)
     print(f"CSV всё вместе: {ROOT_COMBINED_CSV}", flush=True)
-    print(f"Колонки также добавлены в {OUTPUT_OFFLINE_TOURNAMENT_CSV}", flush=True)
     print("", flush=True)
-    header = "игрок | мафия | голос | мирные | шериф | 2-я мафия | дон | %мир | %шер | %маф | %дон"
+    header = "игрок | мирный | голос | в шерифа | %шер | в мирных | в чёрных"
     print(header, flush=True)
-    for row in [vote_all, *vote_players]:
+    for row in [civ_all, *civ_players]:
         print(
             " | ".join(
                 [
                     fmt(row["poster_nick"]),
-                    fmt(row["mafia_games"]),
+                    fmt(row["civilian_games"]),
                     fmt(row["games_with_first_vote"]),
-                    fmt(row["voted_civilian"]),
                     fmt(row["voted_sheriff"]),
-                    fmt(row["voted_own_mafia"]),
-                    fmt(row["voted_own_don"]),
-                    fmt(row["pct_civilian"]),
                     fmt(row["pct_sheriff"]),
-                    fmt(row["pct_own_mafia"]),
-                    fmt(row["pct_own_don"]),
+                    fmt(row["voted_civilian"]),
+                    fmt(row["voted_black"]),
                 ]
             ),
             flush=True,
