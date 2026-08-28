@@ -65,10 +65,8 @@ RENAME_FOR_OFFLINE = {
     "civ_pct_sheriff": "civ_first_vote_pct_sheriff",
     "civ_pct_civilian": "civ_first_vote_pct_civilian",
     "civ_pct_black": "civ_first_vote_pct_black",
-    "sheriff_n1_checked": "sheriff_n1_checked_black",
-    "sheriff_n1_checked_as_mafia": "sheriff_n1_checked_as_mafia",
-    "sheriff_n1_checked_as_don": "sheriff_n1_checked_as_don",
-    "pct_sheriff_n1_on_black": "sheriff_n1_pct_on_black",
+    "sheriff_n1_checked": "sheriff_n1_checked_mafia",
+    "pct_sheriff_n1_on_mafia": "sheriff_n1_pct_on_mafia",
 }
 
 
@@ -134,9 +132,7 @@ def build_combined_row(vote: dict, foul: dict | None, civ: dict | None, check: d
         "speech_pct_on_black": foul.get("pct_on_black_vs_red"),
         "speech_pct_on_red": foul.get("pct_on_red_vs_black"),
         "sheriff_n1_checked": check.get("sheriff_n1_checked"),
-        "sheriff_n1_checked_as_mafia": check.get("sheriff_n1_checked_as_mafia"),
-        "sheriff_n1_checked_as_don": check.get("sheriff_n1_checked_as_don"),
-        "pct_sheriff_n1_on_black": check.get("pct_sheriff_n1_on_black"),
+        "pct_sheriff_n1_on_mafia": check.get("pct_sheriff_n1_on_mafia"),
     }
 
 
@@ -153,6 +149,10 @@ def merge_into_offline_csv(combined_rows: list[dict]) -> None:
         "civ_first_vote_games",
         "civ_first_vote_no_vote",
         "civ_first_vote_sheriff",
+        "sheriff_n1_checked_black",
+        "sheriff_n1_checked_as_mafia",
+        "sheriff_n1_checked_as_don",
+        "sheriff_n1_pct_on_black",
     ]
     drop_cols = [
         col
@@ -240,33 +240,30 @@ def main() -> None:
     check_players, check_all, check_overall = result["checks"]
 
     print(
-        f"Когда наш игрок чёрный: проверка шерифа в первую ночь; "
+        f"Когда наш игрок именно мафия (не дон): проверка шерифа в первую ночь; "
         f"период {DATE_FROM} — {DATE_TO}",
         flush=True,
     )
     print(CHECK_NOTE, flush=True)
     print(
-        f"Чёрных посадок: {check_overall['black_games']}; "
+        f"Мафийных посадок: {check_overall['mafia_games']}; "
         f"шериф ткнул в первую ночь: {check_overall['checked_n1']} "
-        f"({check_all['pct_sheriff_n1_on_black']}%) "
-        f"[мафия {check_overall['checked_n1_as_mafia']}, дон {check_overall['checked_n1_as_don']}]",
+        f"({check_all['pct_sheriff_n1_on_mafia']}%)",
         flush=True,
     )
     print(f"CSV: {ROOT_CHECK_CSV}", flush=True)
     print(f"CSV всё вместе: {ROOT_COMBINED_CSV}", flush=True)
     print("", flush=True)
-    header = "игрок | чёрных | ткнул N1 | % | как мафия | как дон"
+    header = "игрок | мафия | ткнул N1 | %"
     print(header, flush=True)
     for row in [check_all, *check_players]:
         print(
             " | ".join(
                 [
                     fmt(row["poster_nick"]),
-                    fmt(row["black_games"]),
+                    fmt(row["mafia_games"]),
                     fmt(row["sheriff_n1_checked"]),
-                    fmt(row["pct_sheriff_n1_on_black"]),
-                    fmt(row["sheriff_n1_checked_as_mafia"]),
-                    fmt(row["sheriff_n1_checked_as_don"]),
+                    fmt(row["pct_sheriff_n1_on_mafia"]),
                 ]
             ),
             flush=True,
