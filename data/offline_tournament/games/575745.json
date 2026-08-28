@@ -1,0 +1,926 @@
+{
+  "id": 575745,
+  "type": "match",
+  "started_at": "2026-05-22 12:00:00",
+  "ended_at": null,
+  "winnerCode": 1,
+  "updated_at": "2026-05-21 18:53:44",
+  "data": {
+    "started": "2026-05-22T12:00:00.000",
+    "id": 575745,
+    "master": 72433,
+    "referee": {
+      "id": 72433,
+      "username": "Пиджак",
+      "avatar": "72433/avatar.webp"
+    },
+    "zeroVoting": "none",
+    "isLive": true,
+    "scoringVersion": "3.0",
+    "num": 67,
+    "phase": 0,
+    "table": 1,
+    "factor": 1,
+    "version": 4,
+    "players": [
+      {
+        "position": 1,
+        "username": "Данил_Колбасенко",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:20:19.287208",
+            "stage": {
+              "type": "speech",
+              "day": 2,
+              "player": 4
+            }
+          },
+          {
+            "time": "2026-05-21T21:31:34.230578",
+            "stage": {
+              "type": "voting",
+              "day": 2,
+              "voting": 3
+            }
+          },
+          {
+            "time": "2026-05-21T21:36:58.417251",
+            "stage": {
+              "type": "speech",
+              "day": 3,
+              "player": 5
+            }
+          }
+        ],
+        "player": 88950,
+        "quitTime": "2026-05-21T21:51:21.307012"
+      },
+      {
+        "position": 2,
+        "username": "Axeon",
+        "avatar": "1.png",
+        "role": 1,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:27:21.442530",
+            "stage": {
+              "type": "voting",
+              "day": 2,
+              "voting": 1
+            }
+          },
+          {
+            "time": "2026-05-21T21:31:28.611998",
+            "stage": {
+              "type": "reSpeech",
+              "day": 2,
+              "player": 6,
+              "voting": 2
+            }
+          }
+        ],
+        "player": 81057,
+        "guess": {
+          "mafs": [
+            5
+          ]
+        },
+        "quitTime": "2026-05-21T21:43:12.550577"
+      },
+      {
+        "position": 3,
+        "username": "Urusta",
+        "avatar": "1.png",
+        "role": 0,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:14:39.620323",
+            "stage": {
+              "type": "reSpeech",
+              "day": 1,
+              "player": 1
+            }
+          },
+          {
+            "time": "2026-05-21T21:20:44.860044",
+            "stage": {
+              "type": "speech",
+              "day": 2,
+              "player": 4
+            }
+          },
+          {
+            "time": "2026-05-21T21:29:21.925435",
+            "stage": {
+              "type": "reSpeech",
+              "day": 2,
+              "player": 1,
+              "voting": 1
+            }
+          }
+        ],
+        "player": 70666
+      },
+      {
+        "position": 4,
+        "username": "Country",
+        "avatar": "1249/avatar.webp",
+        "role": 3,
+        "techs": [],
+        "fouls": [],
+        "player": 1249,
+        "guess": {
+          "mafs": [
+            2,
+            1,
+            3
+          ]
+        },
+        "quitTime": "2026-05-21T21:35:04.517004"
+      },
+      {
+        "position": 5,
+        "username": "Nevesta",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:34:16.764130",
+            "stage": {
+              "type": "shooted",
+              "day": 3,
+              "player": 4
+            }
+          }
+        ],
+        "player": 62881,
+        "quitTime": "2026-05-21T21:51:26.171041"
+      },
+      {
+        "position": 6,
+        "username": "MadCat",
+        "avatar": "54555/avatar.webp",
+        "role": 2,
+        "techs": [
+          {
+            "time": "2026-05-21T21:32:18.807603",
+            "stage": {
+              "type": "voted",
+              "day": 2,
+              "player": 6,
+              "voting": 3
+            }
+          }
+        ],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:15:12.027221",
+            "stage": {
+              "type": "shooting",
+              "day": 1
+            }
+          },
+          {
+            "time": "2026-05-21T21:28:27.819182",
+            "stage": {
+              "type": "reSpeech",
+              "day": 2,
+              "player": 2,
+              "voting": 1
+            }
+          }
+        ],
+        "player": 54555,
+        "guess": {
+          "mafs": [
+            10,
+            2,
+            1
+          ]
+        },
+        "quitTime": "2026-05-21T21:32:52.885874"
+      },
+      {
+        "position": 7,
+        "username": "Irukan",
+        "avatar": "5623/avatar.webp",
+        "role": 1,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:05:27.220995",
+            "stage": {
+              "type": "speech",
+              "day": 1,
+              "player": 1
+            }
+          }
+        ],
+        "player": 5623
+      },
+      {
+        "position": 8,
+        "username": "Мёдоед",
+        "avatar": "18211/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:12:53.154684",
+            "stage": {
+              "type": "speech",
+              "day": 1,
+              "player": 9
+            }
+          }
+        ],
+        "player": 18211,
+        "guess": {
+          "civs": [
+            1,
+            5,
+            7
+          ]
+        },
+        "quitTime": "2026-05-21T21:17:53.602860"
+      },
+      {
+        "position": 9,
+        "username": "Кармин",
+        "avatar": "70516/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:12:08.295211",
+            "stage": {
+              "type": "speech",
+              "day": 1,
+              "player": 8
+            }
+          },
+          {
+            "time": "2026-05-21T21:27:14.509082",
+            "stage": {
+              "type": "voting",
+              "day": 2,
+              "voting": 1
+            }
+          }
+        ],
+        "player": 70516
+      },
+      {
+        "position": 10,
+        "username": "Лисa",
+        "avatar": "86129/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [
+          {
+            "time": "2026-05-21T21:16:47.286149",
+            "stage": {
+              "type": "shooted",
+              "day": 2,
+              "player": 8
+            }
+          },
+          {
+            "time": "2026-05-21T21:18:05.518556",
+            "stage": {
+              "type": "speech",
+              "day": 2,
+              "player": 2
+            }
+          },
+          {
+            "time": "2026-05-21T21:29:23.422035",
+            "stage": {
+              "type": "reSpeech",
+              "day": 2,
+              "player": 1,
+              "voting": 1
+            }
+          }
+        ],
+        "player": 86129
+      }
+    ],
+    "stage": {
+      "type": "gameOver",
+      "day": 5,
+      "player": 1
+    },
+    "checks": [
+      {
+        "night": 1,
+        "role": 0,
+        "player": 8
+      },
+      {
+        "night": 2,
+        "role": 0,
+        "player": 5
+      },
+      {
+        "night": 3,
+        "role": 0,
+        "player": 4
+      },
+      {
+        "night": 1,
+        "role": 3,
+        "player": 9
+      },
+      {
+        "night": 2,
+        "role": 3,
+        "player": 10
+      }
+    ],
+    "shots": [
+      {
+        "night": 1,
+        "shooter": 2,
+        "victim": 8
+      },
+      {
+        "night": 1,
+        "shooter": 3,
+        "victim": 8
+      },
+      {
+        "night": 1,
+        "shooter": 7,
+        "victim": 8
+      },
+      {
+        "night": 2,
+        "shooter": 2,
+        "victim": 4
+      },
+      {
+        "night": 2,
+        "shooter": 3,
+        "victim": 4
+      },
+      {
+        "night": 2,
+        "shooter": 7,
+        "victim": 4
+      },
+      {
+        "night": 3,
+        "shooter": 3,
+        "victim": 10
+      },
+      {
+        "night": 3,
+        "shooter": 7,
+        "victim": 9
+      },
+      {
+        "night": 4,
+        "shooter": 3,
+        "victim": 5
+      },
+      {
+        "night": 4,
+        "shooter": 7,
+        "victim": 5
+      }
+    ],
+    "votes": [
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 2,
+        "candidate": 10
+      },
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 3,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 4,
+        "candidate": 3
+      },
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 5,
+        "candidate": 5
+      },
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 6,
+        "candidate": 1
+      },
+      {
+        "day": 2,
+        "num": 0,
+        "voter": 7,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 1,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 2,
+        "candidate": 5
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 3,
+        "candidate": 1
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 4,
+        "candidate": 3
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 5,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 6,
+        "candidate": 1
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 7,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 9,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 1,
+        "voter": 10,
+        "candidate": 5
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 1,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 2,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 3,
+        "candidate": 5
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 4,
+        "candidate": 1
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 5,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 6,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 7,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 9,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 2,
+        "voter": 10,
+        "candidate": 5
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 1,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 2,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 3,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 4,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 5,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 6,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 7,
+        "candidate": 6
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 9,
+        "candidate": 2
+      },
+      {
+        "day": 2,
+        "num": 3,
+        "voter": 10,
+        "candidate": 6
+      },
+      {
+        "day": 3,
+        "num": 0,
+        "voter": 1,
+        "candidate": 5
+      },
+      {
+        "day": 3,
+        "num": 0,
+        "voter": 2,
+        "candidate": 1
+      },
+      {
+        "day": 3,
+        "num": 0,
+        "voter": 3,
+        "candidate": 2
+      },
+      {
+        "day": 3,
+        "num": 0,
+        "voter": 9,
+        "candidate": 3
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 1,
+        "candidate": 5
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 2,
+        "candidate": 5
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 3,
+        "candidate": 2
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 5,
+        "candidate": 2
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 7,
+        "candidate": 2
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 9,
+        "candidate": 2
+      },
+      {
+        "day": 3,
+        "num": 1,
+        "voter": 10,
+        "candidate": 2
+      },
+      {
+        "day": 4,
+        "num": 0,
+        "voter": 3,
+        "candidate": 7
+      },
+      {
+        "day": 4,
+        "num": 0,
+        "voter": 5,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 0,
+        "voter": 7,
+        "candidate": 5
+      },
+      {
+        "day": 4,
+        "num": 0,
+        "voter": 9,
+        "candidate": 3
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 1,
+        "candidate": 5
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 3,
+        "candidate": 5
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 5,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 7,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 9,
+        "candidate": 1
+      },
+      {
+        "day": 4,
+        "num": 1,
+        "voter": 10,
+        "candidate": 3
+      }
+    ],
+    "bonuses": [
+      {
+        "position": 5,
+        "text": "тех. фол",
+        "scores": -0.2,
+        "basic": false
+      },
+      {
+        "position": 6,
+        "text": "тех. фол",
+        "scores": -0.2,
+        "basic": false
+      }
+    ],
+    "timing": [
+      null,
+      "2026-05-21T21:15:08.908110",
+      null,
+      "2026-05-21T21:32:52.885863",
+      null,
+      "2026-05-21T21:43:12.550568",
+      null,
+      "2026-05-21T21:50:57.863735"
+    ],
+    "comKiller": 3,
+    "result": 1,
+    "winScores": 0.7
+  },
+  "judge": {
+    "id": 72433,
+    "username": "Пиджак"
+  },
+  "players": [
+    {
+      "id": 88950,
+      "username": "Данил_Колбасенко",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 1,
+      "role_val": 2,
+      "points": -0.3,
+      "quit_index": 7,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 81057,
+      "username": "Axeon",
+      "image": "/image/user-avatar?file_name=1.png&size=100x",
+      "tablePosition": 2,
+      "role_val": 1,
+      "points": 0.9,
+      "quit_index": 5,
+      "w_l": "win",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 70666,
+      "username": "Urusta",
+      "image": "/image/user-avatar?file_name=1.png&size=100x",
+      "tablePosition": 3,
+      "role_val": 0,
+      "points": 1.1,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "godfather",
+        "title": "Дон"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 1249,
+      "username": "Country",
+      "image": "/image/user-avatar?file_name=1249%2Favatar.webp&size=100x",
+      "tablePosition": 4,
+      "role_val": 3,
+      "points": -0.1,
+      "quit_index": 4,
+      "w_l": "lose",
+      "role": {
+        "type": "sheriff",
+        "title": "Шериф"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 62881,
+      "username": "Nevesta",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 5,
+      "role_val": 2,
+      "points": -0.3,
+      "quit_index": 8,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 54555,
+      "username": "MadCat",
+      "image": "/image/user-avatar?file_name=54555%2Favatar.webp&size=100x",
+      "tablePosition": 6,
+      "role_val": 2,
+      "points": -0.2,
+      "quit_index": 3,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 5623,
+      "username": "Irukan",
+      "image": "/image/user-avatar?file_name=5623%2Favatar.webp&size=100x",
+      "tablePosition": 7,
+      "role_val": 1,
+      "points": 1.3,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 18211,
+      "username": "Мёдоед",
+      "image": "/image/user-avatar?file_name=18211%2Favatar.webp&size=100x",
+      "tablePosition": 8,
+      "role_val": 2,
+      "points": 0.3,
+      "quit_index": 2,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 70516,
+      "username": "Кармин",
+      "image": "/image/user-avatar?file_name=70516%2Favatar.webp&size=100x",
+      "tablePosition": 9,
+      "role_val": 2,
+      "points": 0,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 86129,
+      "username": "Лисa",
+      "image": "/image/user-avatar?file_name=86129%2Favatar.webp&size=100x",
+      "tablePosition": 10,
+      "role_val": 2,
+      "points": 0.3,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    }
+  ],
+  "firstKilled": 18211,
+  "bestPlayer": {
+    "id": 5623,
+    "username": "Irukan",
+    "image": "/image/user-avatar?file_name=5623%2Favatar.webp&size=100x",
+    "tablePosition": 7,
+    "role_val": 1,
+    "points": 1.3,
+    "quit_index": null,
+    "w_l": "win",
+    "role": {
+      "type": "mafia",
+      "title": "Мафия"
+    },
+    "mmr_diff": null
+  },
+  "_source_url": "https://polemicagame.com/match/575745"
+}

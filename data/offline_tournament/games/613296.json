@@ -1,0 +1,356 @@
+{
+  "id": 613296,
+  "type": "match",
+  "started_at": "2026-08-02 11:18:16",
+  "ended_at": null,
+  "winnerCode": 1,
+  "updated_at": "2026-08-03 13:29:40",
+  "data": {
+    "started": "2026-08-02T11:18:16.985465",
+    "id": 613296,
+    "master": 64696,
+    "referee": {
+      "id": 64696,
+      "username": "Dmitry_st",
+      "avatar": "64696/1780433702.webp"
+    },
+    "zeroVoting": "none",
+    "isLive": false,
+    "scoringVersion": "3.0",
+    "num": 48,
+    "phase": 0,
+    "table": 3,
+    "factor": 1,
+    "version": 4,
+    "players": [
+      {
+        "position": 1,
+        "username": "Фырчик",
+        "avatar": "78547/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 78547
+      },
+      {
+        "position": 2,
+        "username": "Вега",
+        "avatar": null,
+        "role": 0,
+        "techs": [],
+        "fouls": [],
+        "player": 74136
+      },
+      {
+        "position": 3,
+        "username": "Talisman",
+        "avatar": "92089/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 92089
+      },
+      {
+        "position": 4,
+        "username": "Декс",
+        "avatar": "56690/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 56690
+      },
+      {
+        "position": 5,
+        "username": "ГМЖ",
+        "avatar": "98325/avatar.webp",
+        "role": 1,
+        "techs": [],
+        "fouls": [],
+        "player": 98325
+      },
+      {
+        "position": 6,
+        "username": "Сан-Франциско",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 143339
+      },
+      {
+        "position": 7,
+        "username": "комик",
+        "avatar": "71705/avatar.webp",
+        "role": 3,
+        "techs": [],
+        "fouls": [],
+        "player": 71705
+      },
+      {
+        "position": 8,
+        "username": "Оладуш",
+        "avatar": "51777/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 51777
+      },
+      {
+        "position": 9,
+        "username": "Elric",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 99882
+      },
+      {
+        "position": 10,
+        "username": "Искра",
+        "avatar": "67793/avatar.webp",
+        "role": 1,
+        "techs": [],
+        "fouls": [],
+        "player": 67793
+      }
+    ],
+    "stage": {
+      "type": "gameOver",
+      "day": 0,
+      "player": 1
+    },
+    "checks": [],
+    "shots": [],
+    "votes": [],
+    "bonuses": [
+      {
+        "position": 2,
+        "text": "д",
+        "scores": 0.4,
+        "basic": false
+      },
+      {
+        "position": 10,
+        "text": "д",
+        "scores": 0.4,
+        "basic": false
+      },
+      {
+        "position": 6,
+        "text": "д",
+        "scores": 0.4,
+        "basic": false
+      },
+      {
+        "position": 5,
+        "text": "вне зачета ",
+        "scores": -1.1,
+        "basic": true
+      },
+      {
+        "position": 7,
+        "text": "д",
+        "scores": 0.4,
+        "basic": false
+      },
+      {
+        "position": 8,
+        "text": "неотыграна серия",
+        "scores": -3,
+        "basic": true
+      },
+      {
+        "position": 3,
+        "text": "неотыграна серия",
+        "scores": -3,
+        "basic": true
+      },
+      {
+        "position": 9,
+        "text": "неотыграна серия",
+        "scores": -1.5,
+        "basic": true
+      }
+    ],
+    "stop": {
+      "type": "comIntro",
+      "day": 0
+    },
+    "comKiller": 2,
+    "result": 1,
+    "winScores": 1
+  },
+  "judge": {
+    "id": 64696,
+    "username": "Dmitry_st"
+  },
+  "players": [
+    {
+      "id": 78547,
+      "username": "Фырчик",
+      "image": "/image/user-avatar?file_name=78547%2Favatar.webp&size=100x",
+      "tablePosition": 1,
+      "role_val": 2,
+      "points": 0,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 74136,
+      "username": "Вега",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 2,
+      "role_val": 0,
+      "points": 1.5,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "godfather",
+        "title": "Дон"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 92089,
+      "username": "Talisman",
+      "image": "/image/user-avatar?file_name=92089%2Favatar.webp&size=100x",
+      "tablePosition": 3,
+      "role_val": 2,
+      "points": -3,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 56690,
+      "username": "Декс",
+      "image": "/image/user-avatar?file_name=56690%2Favatar.webp&size=100x",
+      "tablePosition": 4,
+      "role_val": 2,
+      "points": 0,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 98325,
+      "username": "ГМЖ",
+      "image": "/image/user-avatar?file_name=98325%2Favatar.webp&size=100x",
+      "tablePosition": 5,
+      "role_val": 1,
+      "points": 0,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 143339,
+      "username": "Сан-Франциско",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 6,
+      "role_val": 2,
+      "points": 0.4,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 71705,
+      "username": "комик",
+      "image": "/image/user-avatar?file_name=71705%2Favatar.webp&size=100x",
+      "tablePosition": 7,
+      "role_val": 3,
+      "points": 0.4,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "sheriff",
+        "title": "Шериф"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 51777,
+      "username": "Оладуш",
+      "image": "/image/user-avatar?file_name=51777%2Favatar.webp&size=100x",
+      "tablePosition": 8,
+      "role_val": 2,
+      "points": -3,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 99882,
+      "username": "Elric",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 9,
+      "role_val": 2,
+      "points": -1.5,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 67793,
+      "username": "Искра",
+      "image": "/image/user-avatar?file_name=67793%2Favatar.webp&size=100x",
+      "tablePosition": 10,
+      "role_val": 1,
+      "points": 1.5,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    }
+  ],
+  "firstKilled": [],
+  "bestPlayer": {
+    "id": 74136,
+    "username": "Вега",
+    "image": "/image/user-avatar?size=100x",
+    "tablePosition": 2,
+    "role_val": 0,
+    "points": 1.5,
+    "quit_index": null,
+    "w_l": "win",
+    "role": {
+      "type": "godfather",
+      "title": "Дон"
+    },
+    "mmr_diff": null
+  },
+  "_source_url": "https://polemicagame.com/match/613296"
+}

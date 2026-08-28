@@ -12,8 +12,10 @@ import requests
 BASE_URL = "https://polemicagame.com"
 APP_API_URL = "https://app.polemicagame.com"
 OUTPUT_CSV = "polemica_stats.csv"
+OUTPUT_OFFLINE_TOURNAMENT_CSV = "polemica_offline_tournament_stats.csv"
+OUTPUT_NO_OPEN_CSV = "polemica_no_open_stats.csv"
 
-# Статистика за период (примерно последние 9 месяцев)
+# Статистика с 1 января 2026
 DATE_FROM = "2026-01-01"
 DATE_TO = "2026-08-27"
 
@@ -153,14 +155,63 @@ ROLES = (
     ("mafia", "mafia"),
     ("godfather", "don"),
 )
+# Как в фильтрах профиля Polemica:
+# competition = оффлайн-турниры, tournament = онлайн-турниры,
+# league / lobby / club = не турнир (онлайн).
+# lobby = открытые/фановые столы.
 GAME_TYPES = ("league", "lobby", "club", "competition", "tournament")
 SCORINGS = ("scoring_1", "scoring_2", "scoring_3")
+OFFLINE_TOURNAMENT_TYPE = "competition"
+OPEN_GAME_TYPE = "lobby"
+NO_OPEN_GAME_TYPES = ("league", "club", "competition", "tournament")
+SLICE_TYPES = {
+    "all_tournament": ("competition", "tournament"),
+    "non_tournament": ("league", "lobby", "club"),
+    "online": ("league", "lobby", "club", "tournament"),
+    "offline": ("competition",),
+    "open": ("lobby",),
+    "no_open": NO_OPEN_GAME_TYPES,
+}
+SLICE_EXPORTS = (
+    {
+        "path": OUTPUT_OFFLINE_TOURNAMENT_CSV,
+        "slice": "offline_tournament",
+        "slice_label": "Оффлайн турниры",
+        "game_type": OFFLINE_TOURNAMENT_TYPE,
+    },
+    {
+        "path": OUTPUT_NO_OPEN_CSV,
+        "slice": "no_open",
+        "slice_label": "Без лобби (открытых/фановых игр)",
+        "game_type": ",".join(NO_OPEN_GAME_TYPES),
+    },
+)
 
 
 def unwrap_totals(data) -> dict:
     if isinstance(data, list):
         return data[0] if data else {}
     return data or {}
+
+
+def merge_totals(*items) -> dict:
+    int_keys = (
+        "games_count",
+        "wins_count",
+        "first_killed_count",
+        "fouls_count",
+        "tech_fouls_count",
+    )
+    float_keys = ("points", "extra_points", "best_move_points")
+    merged = {key: 0 for key in int_keys}
+    merged.update({key: 0.0 for key in float_keys})
+    for item in items:
+        data = unwrap_totals(item)
+        for key in int_keys:
+            merged[key] += int(data.get(key) or 0)
+        for key in float_keys:
+            merged[key] += float(data.get(key) or 0)
+    return merged
 
 
 def totals_fields(data, prefix: str = "") -> dict:
@@ -301,8 +352,17 @@ def stats_params(user_id: int) -> dict:
     }
 
 
-def fetch_player_bundle(user_id: int) -> dict:
+def fetch_player_bundle(
+    user_id: int,
+    extra: dict | None = None,
+    *,
+    include_types: bool = True,
+    include_scoring: bool = True,
+    include_achievements: bool = True,
+) -> dict:
     params = stats_params(user_id)
+    if extra:
+        params.update(extra)
     bundle = {
         "roles_split": fetch_safe("/profile/default/get-statistic", params) or {},
         "overall": unwrap_totals(
@@ -319,29 +379,32 @@ def fetch_player_bundle(user_id: int) -> dict:
         bundle["by_role"][api_role] = unwrap_totals(
             fetch_safe("/profile/default/get-role-statistic", role_params)
         )
-    for game_type in GAME_TYPES:
-        type_params = dict(params)
-        type_params["game_type"] = game_type
-        bundle["by_type"][game_type] = unwrap_totals(
-            fetch_safe("/profile/default/get-role-statistic", type_params)
+    if include_types:
+        for game_type in GAME_TYPES:
+            type_params = dict(params)
+            type_params["game_type"] = game_type
+            bundle["by_type"][game_type] = unwrap_totals(
+                fetch_safe("/profile/default/get-role-statistic", type_params)
+            )
+    if include_scoring:
+        for scoring in SCORINGS:
+            scoring_params = dict(params)
+            scoring_params["scoring_type"] = scoring
+            bundle["by_scoring"][scoring] = unwrap_totals(
+                fetch_safe("/profile/default/get-role-statistic", scoring_params)
+            )
+    if include_achievements:
+        achievements = fetch_safe(
+            "/profile/default/get-achievements",
+            {"userId": user_id},
         )
-    for scoring in SCORINGS:
-        scoring_params = dict(params)
-        scoring_params["scoring_type"] = scoring
-        bundle["by_scoring"][scoring] = unwrap_totals(
-            fetch_safe("/profile/default/get-role-statistic", scoring_params)
-        )
-    achievements = fetch_safe(
-        "/profile/default/get-achievements",
-        {"userId": user_id},
-    )
-    if isinstance(achievements, list):
-        bundle["achievements"] = achievements
+        if isinstance(achievements, list):
+            bundle["achievements"] = achievements
     return bundle
 
 
-def build_record(poster_nick: str, player: dict | None) -> dict:
-    record = {
+def identity_record(poster_nick: str) -> dict:
+    return {
         "poster_nick": poster_nick,
         "polemica_nick": None,
         "user_id": None,
@@ -360,10 +423,9 @@ def build_record(poster_nick: str, player: dict | None) -> dict:
         "achievements": None,
         "error": None,
     }
-    if not player:
-        record["error"] = "игрок не найден"
-        return record
 
+
+def fill_identity(record: dict, player: dict) -> None:
     user_id = player["user_id"]
     record.update(
         {
@@ -385,12 +447,13 @@ def build_record(poster_nick: str, player: dict | None) -> dict:
         }
     )
 
-    bundle = fetch_player_bundle(user_id)
+
+def apply_bundle(record: dict, bundle: dict, *, include_types: bool = True) -> None:
     overall = bundle["overall"]
     roles_split = bundle["roles_split"]
     if not overall and not roles_split:
         record["error"] = "статистика недоступна"
-        return record
+        return
 
     if overall:
         record.update(totals_fields(overall))
@@ -401,18 +464,68 @@ def build_record(poster_nick: str, player: dict | None) -> dict:
         else:
             fallback = (roles_split or {}).get(api_role) or {}
             record.update(totals_fields(fallback, prefix))
-    for game_type in GAME_TYPES:
-        record.update(totals_fields(bundle["by_type"].get(game_type), game_type))
+    if include_types:
+        for game_type in GAME_TYPES:
+            record.update(totals_fields(bundle["by_type"].get(game_type), game_type))
+        for prefix, types in SLICE_TYPES.items():
+            combined = merge_totals(*(bundle["by_type"].get(game_type) for game_type in types))
+            record.update(totals_fields(combined, prefix))
     for scoring in SCORINGS:
-        record.update(totals_fields(bundle["by_scoring"].get(scoring), scoring))
+        if scoring in bundle["by_scoring"]:
+            record.update(totals_fields(bundle["by_scoring"].get(scoring), scoring))
 
     achieved = [
         item.get("name")
         for item in bundle["achievements"]
         if item.get("is_achieved")
     ]
-    record["achievements_count"] = len(achieved)
-    record["achievements"] = "; ".join(achieved)
+    if bundle["achievements"]:
+        record["achievements_count"] = len(achieved)
+        record["achievements"] = "; ".join(achieved)
+
+
+def build_record(poster_nick: str, player: dict | None) -> dict:
+    record = identity_record(poster_nick)
+    if not player:
+        record["error"] = "игрок не найден"
+        return record
+
+    fill_identity(record, player)
+    apply_bundle(record, fetch_player_bundle(player["user_id"]))
+    return record
+
+
+def build_slice_record(
+    poster_nick: str,
+    player: dict | None,
+    *,
+    slice_name: str,
+    slice_label: str,
+    game_type: str,
+) -> dict:
+    record = identity_record(poster_nick)
+    record.update(
+        {
+            "slice": slice_name,
+            "slice_label": slice_label,
+            "game_type": game_type,
+        }
+    )
+    if not player:
+        record["error"] = "игрок не найден"
+        return record
+
+    fill_identity(record, player)
+    apply_bundle(
+        record,
+        fetch_player_bundle(
+            player["user_id"],
+            {"game_type": game_type},
+            include_types=False,
+            include_achievements=False,
+        ),
+        include_types=False,
+    )
     return record
 
 
@@ -469,14 +582,28 @@ def main():
         print(f"[Warning] Рейтинг федерации недоступен: {exc}", flush=True)
 
     records = []
+    slice_records = {item["slice"]: [] for item in SLICE_EXPORTS}
     for nick in POSTER_NICKS:
         player = known.get(nick)
         if player:
             print(f"  {nick} → {player['username']} (id={player['user_id']})", flush=True)
         else:
             print(f"  {nick} → не найден", flush=True)
-        records.append(build_record(nick, player))
+        general = build_record(nick, player)
+        records.append(general)
         time.sleep(0.35)
+        for item in SLICE_EXPORTS:
+            sliced = build_slice_record(
+                nick,
+                player,
+                slice_name=item["slice"],
+                slice_label=item["slice_label"],
+                game_type=item["game_type"],
+            )
+            sliced["achievements_count"] = general.get("achievements_count")
+            sliced["achievements"] = general.get("achievements")
+            slice_records[item["slice"]].append(sliced)
+            time.sleep(0.35)
 
     df = pd.DataFrame(records)
     df.to_csv(OUTPUT_CSV, index=False, encoding="utf-8-sig")
@@ -486,17 +613,40 @@ def main():
         "poster_nick",
         "games",
         "winrate",
-        "avg_score",
-        "club_games",
+        "all_tournament_games",
+        "non_tournament_games",
+        "online_games",
+        "offline_games",
+        "open_games",
+        "no_open_games",
         "competition_games",
+        "tournament_games",
+        "lobby_games",
         "fed_scores",
-        "civilian_avg_score",
-        "mafia_avg_score",
-        "don_avg_score",
-        "achievements_count",
         "error",
     ]
     print(df[preview_cols].to_string(index=False))
+
+    slice_preview = [
+        "poster_nick",
+        "games",
+        "winrate",
+        "avg_score",
+        "civilian_avg_score",
+        "sheriff_avg_score",
+        "mafia_avg_score",
+        "don_avg_score",
+        "error",
+    ]
+    for item in SLICE_EXPORTS:
+        sliced_df = pd.DataFrame(slice_records[item["slice"]])
+        sliced_df.to_csv(item["path"], index=False, encoding="utf-8-sig")
+        sliced_found = sliced_df["user_id"].notna().sum()
+        print(
+            f"\nСохранено {sliced_found}/{len(sliced_df)} игроков в «{item['path']}»",
+            flush=True,
+        )
+        print(sliced_df[slice_preview].to_string(index=False))
 
 
 if __name__ == "__main__":

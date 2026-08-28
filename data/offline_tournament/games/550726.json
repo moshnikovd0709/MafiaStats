@@ -1,0 +1,350 @@
+{
+  "id": 550726,
+  "type": "match",
+  "started_at": "2026-04-08 14:14:09",
+  "ended_at": null,
+  "winnerCode": 0,
+  "updated_at": "2026-04-08 20:07:29",
+  "data": {
+    "started": "2026-04-08T14:14:09.118736",
+    "id": 550726,
+    "master": 64696,
+    "referee": {
+      "id": 64696,
+      "username": "Dmitry_st",
+      "avatar": "64696/avatar.webp"
+    },
+    "zeroVoting": "none",
+    "isLive": false,
+    "scoringVersion": "3.0",
+    "num": 4,
+    "phase": 0,
+    "table": 2,
+    "factor": 1,
+    "version": 4,
+    "players": [
+      {
+        "position": 1,
+        "username": "SkOrPionsha_",
+        "avatar": null,
+        "role": 0,
+        "techs": [],
+        "fouls": [],
+        "player": 51380
+      },
+      {
+        "position": 2,
+        "username": "Фырчик",
+        "avatar": "78547/avatar.webp",
+        "role": 3,
+        "techs": [],
+        "fouls": [],
+        "player": 78547
+      },
+      {
+        "position": 3,
+        "username": "Куртка Бейн",
+        "avatar": null,
+        "role": 1,
+        "techs": [],
+        "fouls": [],
+        "player": 66257
+      },
+      {
+        "position": 4,
+        "username": "ЧехонтЭ",
+        "avatar": "68704/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 68704
+      },
+      {
+        "position": 5,
+        "username": "Лекc",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 128567
+      },
+      {
+        "position": 6,
+        "username": "Сан-Франциско",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 143339
+      },
+      {
+        "position": 7,
+        "username": "Rikso",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 68136
+      },
+      {
+        "position": 8,
+        "username": "Enigma_Spb",
+        "avatar": "79731/avatar.webp",
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 79731
+      },
+      {
+        "position": 9,
+        "username": "Госпожа Julie",
+        "avatar": null,
+        "role": 2,
+        "techs": [],
+        "fouls": [],
+        "player": 72056
+      },
+      {
+        "position": 10,
+        "username": "Маэстро СПб",
+        "avatar": "84958/avatar.webp",
+        "role": 1,
+        "techs": [],
+        "fouls": [],
+        "player": 84958
+      }
+    ],
+    "stage": {
+      "type": "gameOver",
+      "day": 1
+    },
+    "checks": [],
+    "shots": [],
+    "votes": [],
+    "bonuses": [
+      {
+        "position": 2,
+        "text": "доп",
+        "scores": -0.2,
+        "basic": false
+      },
+      {
+        "position": 4,
+        "text": "доп",
+        "scores": -0.3,
+        "basic": false
+      },
+      {
+        "position": 5,
+        "text": "доп",
+        "scores": 0.7,
+        "basic": false
+      },
+      {
+        "position": 6,
+        "text": "доп+лх+сишка",
+        "scores": 0.35,
+        "basic": false
+      },
+      {
+        "position": 7,
+        "text": "доп",
+        "scores": 0.6,
+        "basic": false
+      },
+      {
+        "position": 9,
+        "text": "доп",
+        "scores": 0.2,
+        "basic": false
+      },
+      {
+        "position": 5,
+        "text": "техфол",
+        "scores": -0.3,
+        "basic": true
+      }
+    ],
+    "stop": {
+      "type": "speech",
+      "day": 1,
+      "player": 1
+    },
+    "comKiller": 1,
+    "result": 0,
+    "winScores": 1
+  },
+  "judge": {
+    "id": 64696,
+    "username": "Dmitry_st"
+  },
+  "players": [
+    {
+      "id": 51380,
+      "username": "SkOrPionsha_",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 1,
+      "role_val": 0,
+      "points": 0,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "godfather",
+        "title": "Дон"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 78547,
+      "username": "Фырчик",
+      "image": "/image/user-avatar?file_name=78547%2Favatar.webp&size=100x",
+      "tablePosition": 2,
+      "role_val": 3,
+      "points": 0.8,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "sheriff",
+        "title": "Шериф"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 66257,
+      "username": "Куртка Бейн",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 3,
+      "role_val": 1,
+      "points": 0,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 68704,
+      "username": "ЧехонтЭ",
+      "image": "/image/user-avatar?file_name=68704%2Favatar.webp&size=100x",
+      "tablePosition": 4,
+      "role_val": 2,
+      "points": 0.7,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 128567,
+      "username": "Лекc",
+      "image": "/image/user-avatar?file_name=128567%2F1781298614.webp&size=100x",
+      "tablePosition": 5,
+      "role_val": 2,
+      "points": 1.4,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 143339,
+      "username": "Сан-Франциско",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 6,
+      "role_val": 2,
+      "points": 1.35,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 68136,
+      "username": "Rikso",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 7,
+      "role_val": 2,
+      "points": 1.6,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 79731,
+      "username": "Enigma_Spb",
+      "image": "/image/user-avatar?file_name=79731%2Favatar.webp&size=100x",
+      "tablePosition": 8,
+      "role_val": 2,
+      "points": 1,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 72056,
+      "username": "Госпожа Julie",
+      "image": "/image/user-avatar?size=100x",
+      "tablePosition": 9,
+      "role_val": 2,
+      "points": 1.2,
+      "quit_index": null,
+      "w_l": "win",
+      "role": {
+        "type": "civilian",
+        "title": "Мирный"
+      },
+      "mmr_diff": null
+    },
+    {
+      "id": 84958,
+      "username": "Маэстро СПб",
+      "image": "/image/user-avatar?file_name=84958%2Favatar.webp&size=100x",
+      "tablePosition": 10,
+      "role_val": 1,
+      "points": 0,
+      "quit_index": null,
+      "w_l": "lose",
+      "role": {
+        "type": "mafia",
+        "title": "Мафия"
+      },
+      "mmr_diff": null
+    }
+  ],
+  "firstKilled": [],
+  "bestPlayer": {
+    "id": 68136,
+    "username": "Rikso",
+    "image": "/image/user-avatar?size=100x",
+    "tablePosition": 7,
+    "role_val": 2,
+    "points": 1.6,
+    "quit_index": null,
+    "w_l": "win",
+    "role": {
+      "type": "civilian",
+      "title": "Мирный"
+    },
+    "mmr_diff": null
+  },
+  "_source_url": "https://polemicagame.com/match/550726"
+}
