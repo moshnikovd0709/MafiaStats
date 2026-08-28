@@ -160,17 +160,24 @@ def replay(payload: dict) -> dict:
     )
     alive_at_night: dict[int, set[int]] = {}
     alive_at_day: dict[int, set[int]] = {}
+    vote_elims: list[dict] = []
 
     def apply_disquals(day: int) -> None:
         for dq_day, seat in disquals:
             if dq_day == day and seat in alive and last_vote_day.get(seat, 0) <= day:
                 alive.discard(seat)
 
+    def take_vote(day: int) -> None:
+        elims = vote_eliminated(votes, day, alive, last_vote_day, with_quit_time)
+        if elims:
+            vote_elims.append({"day": day, "seats": list(elims)})
+            for seat in elims:
+                alive.discard(seat)
+
     apply_disquals(1)
     alive_at_day[1] = set(alive)
     if 1 in days:
-        for seat in vote_eliminated(votes, 1, alive, last_vote_day, with_quit_time):
-            alive.discard(seat)
+        take_vote(1)
 
     for night in range(1, max_n + 1):
         alive_at_night[night] = set(alive)
@@ -181,8 +188,7 @@ def replay(payload: dict) -> dict:
         apply_disquals(day)
         alive_at_day[day] = set(alive)
         if day in days:
-            for seat in vote_eliminated(votes, day, alive, last_vote_day, with_quit_time):
-                alive.discard(seat)
+            take_vote(day)
 
     return {
         "by_role": by_role,
@@ -194,6 +200,7 @@ def replay(payload: dict) -> dict:
         "inner": inner,
         "with_quit_time": with_quit_time,
         "final_alive": set(alive),
+        "vote_elims": vote_elims,
     }
 
 
