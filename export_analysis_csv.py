@@ -32,9 +32,13 @@ from analyze_ugadayka import (
 )
 from analyze_first_voted import (
     OUT_OVERALL as FIRST_OVERALL,
+    OUT_RED_OVERALL as FIRST_RED_OVERALL,
+    OUT_RED_SUMMARY as FIRST_RED_SUMMARY,
     OUT_SUMMARY as FIRST_SUMMARY,
     analyze as analyze_first,
+    analyze_red as analyze_first_red,
     row_from_stats as first_row,
+    row_from_stats_red as first_red_row,
     sort_rows as first_sort,
 )
 from analyze_mafia_day1_votes import (
@@ -51,6 +55,7 @@ ROOT_CIV_CSV = Path("polemica_civilian_first_votes.csv")
 ROOT_CHECK_CSV = Path("polemica_sheriff_n1_black_checks.csv")
 ROOT_UGA_CSV = Path("polemica_ugadayka.csv")
 ROOT_FIRST_CSV = Path("polemica_first_voted.csv")
+ROOT_FIRST_RED_CSV = Path("polemica_first_voted_red.csv")
 ROOT_COMBINED_CSV = Path("polemica_offline_tournament_analysis.csv")
 
 RENAME_FOR_OFFLINE = {
@@ -96,6 +101,11 @@ RENAME_FOR_OFFLINE = {
     "games": "protocol_games",
     "first_voted": "first_voted_out",
     "pct_first_voted": "first_voted_pct",
+    "red_games": "first_voted_red_games",
+    "red_first_voted": "first_voted_red",
+    "red_pct_first_voted": "first_voted_red_pct",
+    "red_as_civilian": "first_voted_red_civilian",
+    "red_as_sheriff": "first_voted_red_sheriff",
 }
 
 
@@ -120,12 +130,14 @@ def build_combined_row(
     check: dict | None,
     uga: dict | None = None,
     first: dict | None = None,
+    first_red: dict | None = None,
 ) -> dict:
     foul = foul or {}
     civ = civ or {}
     check = check or {}
     uga = uga or {}
     first = first or {}
+    first_red = first_red or {}
     return {
         "date_from": DATE_FROM,
         "date_to": DATE_TO,
@@ -191,6 +203,11 @@ def build_combined_row(
         "first_voted_as_don": first.get("as_don"),
         "first_voted_day2": first.get("day2"),
         "first_voted_day3plus": first.get("day3plus"),
+        "red_games": first_red.get("games"),
+        "red_first_voted": first_red.get("first_voted"),
+        "red_pct_first_voted": first_red.get("pct_first_voted"),
+        "red_as_civilian": first_red.get("as_civilian"),
+        "red_as_sheriff": first_red.get("as_sheriff"),
     }
 
 
@@ -230,6 +247,7 @@ def export_all() -> dict:
     check_per, check_overall = analyze_checks()
     uga_per, uga_overall = analyze_uga()
     first_per, first_overall = analyze_first()
+    first_red_per, first_red_overall = analyze_first_red()
 
     foul_players = [
         with_period(fouls_row(stats))
@@ -270,6 +288,12 @@ def export_all() -> dict:
     ]
     first_all = with_period(first_row(first_overall, "ALL"))
     first_players = first_sort(first_players)
+    first_red_players = [
+        with_period(first_red_row(stats))
+        for _, stats in sorted(first_red_per.items(), key=lambda item: item[1]["poster_nick"])
+    ]
+    first_red_all = with_period(first_red_row(first_red_overall, "ALL"))
+    first_red_players = first_sort(first_red_players)
 
     write_csv(FOULS_SUMMARY, foul_players)
     write_csv(FOULS_OVERALL, [foul_all])
@@ -295,11 +319,16 @@ def export_all() -> dict:
     write_csv(FIRST_OVERALL, [first_all])
     write_csv(ROOT_FIRST_CSV, [first_all, *first_players])
 
+    write_csv(FIRST_RED_SUMMARY, first_red_players)
+    write_csv(FIRST_RED_OVERALL, [first_red_all])
+    write_csv(ROOT_FIRST_RED_CSV, [first_red_all, *first_red_players])
+
     fouls_by_nick = {row["poster_nick"]: row for row in [foul_all, *foul_players]}
     civ_by_nick = {row["poster_nick"]: row for row in [civ_all, *civ_players]}
     check_by_nick = {row["poster_nick"]: row for row in [check_all, *check_players]}
     uga_by_nick = {row["poster_nick"]: row for row in [uga_all, *uga_players]}
     first_by_nick = {row["poster_nick"]: row for row in [first_all, *first_players]}
+    first_red_by_nick = {row["poster_nick"]: row for row in [first_red_all, *first_red_players]}
     combined = [
         build_combined_row(
             vote,
@@ -308,6 +337,7 @@ def export_all() -> dict:
             check_by_nick.get(vote["poster_nick"]),
             uga_by_nick.get(vote["poster_nick"]),
             first_by_nick.get(vote["poster_nick"]),
+            first_red_by_nick.get(vote["poster_nick"]),
         )
         for vote in [vote_all, *vote_players]
     ]
@@ -321,36 +351,34 @@ def export_all() -> dict:
         "checks": (check_players, check_all, check_overall),
         "ugadayka": (uga_players, uga_all, uga_overall),
         "first_voted": (first_players, first_all, first_overall),
+        "first_voted_red": (first_red_players, first_red_all, first_red_overall),
         "combined": combined,
     }
 
 
 def main() -> None:
     from analyze_mafia_day1_votes import fmt
-    from analyze_first_voted import NOTE as FIRST_NOTE
+    from analyze_first_voted import NOTE_RED as FIRST_RED_NOTE
 
     result = export_all()
-    first_players, first_all, first_overall = result["first_voted"]
-    unique_games = first_overall["unique_games"]
-    unique_with = first_overall["unique_with_vote_out"]
+    first_players, first_all, first_overall = result["first_voted_red"]
 
     print(
-        f"Первый уход со стола голосованием, любая роль; "
+        f"Первый уход со стола голосованием, только мирный или шериф; "
         f"период {DATE_FROM} — {DATE_TO}",
         flush=True,
     )
-    print(FIRST_NOTE, flush=True)
+    print(FIRST_RED_NOTE, flush=True)
     print(
-        f"Партий: {unique_games}; с первым вылетом голосованием: {unique_with}. "
-        f"Посадки наших: {first_all['games']}, "
+        f"Красные посадки наших: {first_all['games']}, "
         f"первый на голосовании: {first_all['first_voted']} "
         f"({first_all['pct_first_voted']}%)",
         flush=True,
     )
-    print(f"CSV: {ROOT_FIRST_CSV}", flush=True)
+    print(f"CSV: {ROOT_FIRST_RED_CSV}", flush=True)
     print(f"CSV всё вместе: {ROOT_COMBINED_CSV}", flush=True)
     print("", flush=True)
-    header = "игрок | посадки | первый вылет | % | мирный | шериф | мафия | дон"
+    header = "игрок | красные | первый вылет | % | мирный | шериф"
     print(header, flush=True)
     for row in [first_all, *first_players]:
         print(
@@ -362,8 +390,6 @@ def main() -> None:
                     fmt(row["pct_first_voted"]),
                     fmt(row["as_civilian"]),
                     fmt(row["as_sheriff"]),
-                    fmt(row["as_mafia"]),
-                    fmt(row["as_don"]),
                 ]
             ),
             flush=True,

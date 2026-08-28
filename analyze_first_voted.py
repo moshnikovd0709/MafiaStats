@@ -5,6 +5,7 @@ from pathlib import Path
 
 from analyze_black_speech_fouls import (
     GAMES_DIR,
+    RED_ROLES,
     ROLE_CIVILIAN,
     ROLE_DON,
     ROLE_MAFIA,
@@ -18,12 +19,22 @@ from script import DATE_FROM, DATE_TO
 
 OUT_SUMMARY = Path("data/offline_tournament/analysis_first_voted.csv")
 OUT_OVERALL = Path("data/offline_tournament/analysis_first_voted_overall.csv")
+OUT_RED_SUMMARY = Path("data/offline_tournament/analysis_first_voted_red.csv")
+OUT_RED_OVERALL = Path("data/offline_tournament/analysis_first_voted_red_overall.csv")
 
 NOTE = (
     f"Период {DATE_FROM} — {DATE_TO}. Первый уход со стола голосованием: "
     "кто вылетел на первом состоявшемся голосовании партии (обычно день 2 "
     "после ночного отстрела; в оффлайн-турнирах Polemica в 1-й день голосования почти нет). "
     "Ночной отстрел не считается. Любая роль. "
+    "Если на первом круге ничья и со стола уходят несколько — все они первый вылет. "
+    "Случайный уровень ~11.1% (1 из 9 живых после первого отстрела)."
+)
+NOTE_RED = (
+    f"Период {DATE_FROM} — {DATE_TO}. Первый уход со стола голосованием, "
+    "только красные роли: мирный или шериф. "
+    "Кто вылетел на первом состоявшемся голосовании партии (обычно день 2 "
+    "после ночного отстрела). Ночной отстрел не считается. "
     "Если на первом круге ничья и со стола уходят несколько — все они первый вылет. "
     "Случайный уровень ~11.1% (1 из 9 живых после первого отстрела)."
 )
@@ -66,7 +77,7 @@ def apply_role(stats: dict, role: int | None) -> None:
         stats["as_don"] += 1
 
 
-def analyze() -> tuple[dict[int, dict], dict]:
+def analyze(roles: set[int] | None = None) -> tuple[dict[int, dict], dict]:
     tracked = load_tracked_players()
     per_player = {user_id: empty_stats() | dict(meta) for user_id, meta in tracked.items()}
     overall = empty_stats()
@@ -92,11 +103,13 @@ def analyze() -> tuple[dict[int, dict], dict]:
         for player in inner:
             user_id = player.get("player")
             pos = player.get("position")
+            role = player.get("role")
             if user_id not in tracked or pos is None:
+                continue
+            if roles is not None and role not in roles:
                 continue
             user_id = int(user_id)
             pos = int(pos)
-            role = player.get("role")
             buckets = [per_player[user_id], overall]
             for stats in buckets:
                 stats["games"] += 1
@@ -120,10 +133,14 @@ def analyze() -> tuple[dict[int, dict], dict]:
     return per_player, overall
 
 
-def row_from_stats(stats: dict, label: str | None = None) -> dict:
+def analyze_red() -> tuple[dict[int, dict], dict]:
+    return analyze(roles=RED_ROLES)
+
+
+def row_from_stats(stats: dict, label: str | None = None, red: bool = False) -> dict:
     games = stats["games"]
     first = stats["first_voted"]
-    return {
+    row = {
         "poster_nick": stats.get("poster_nick") or label or "ALL",
         "polemica_nick": stats.get("polemica_nick") or "",
         "user_id": stats.get("user_id") or "",
@@ -133,17 +150,27 @@ def row_from_stats(stats: dict, label: str | None = None) -> dict:
         "pct_first_voted": pct(first, games),
         "as_civilian": stats["as_civilian"],
         "as_sheriff": stats["as_sheriff"],
-        "as_mafia": stats["as_mafia"],
-        "as_don": stats["as_don"],
-        "day2": stats["day2"],
-        "day3plus": stats["day3plus"],
-        "solo_elim": stats["solo_elim"],
-        "multi_elim": stats["multi_elim"],
-        "naive_random_pct": 11.1,
-        "unique_games": stats.get("unique_games") or "",
-        "unique_with_vote_out": stats.get("unique_with_vote_out") or "",
-        "note": NOTE,
     }
+    if not red:
+        row["as_mafia"] = stats["as_mafia"]
+        row["as_don"] = stats["as_don"]
+    row.update(
+        {
+            "day2": stats["day2"],
+            "day3plus": stats["day3plus"],
+            "solo_elim": stats["solo_elim"],
+            "multi_elim": stats["multi_elim"],
+            "naive_random_pct": 11.1,
+            "unique_games": stats.get("unique_games") or "",
+            "unique_with_vote_out": stats.get("unique_with_vote_out") or "",
+            "note": NOTE_RED if red else NOTE,
+        }
+    )
+    return row
+
+
+def row_from_stats_red(stats: dict, label: str | None = None) -> dict:
+    return row_from_stats(stats, label, red=True)
 
 
 def sort_rows(rows: list[dict]) -> list[dict]:
