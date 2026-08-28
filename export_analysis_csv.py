@@ -17,6 +17,12 @@ from analyze_civilian_first_votes import (
     analyze as analyze_civ,
     row_from_stats as civ_row,
 )
+from analyze_sheriff_n1_black_checks import (
+    OUT_OVERALL as CHECK_OVERALL,
+    OUT_SUMMARY as CHECK_SUMMARY,
+    analyze as analyze_checks,
+    row_from_stats as check_row,
+)
 from analyze_mafia_day1_votes import (
     OUT_OVERALL as VOTES_OVERALL,
     OUT_SUMMARY as VOTES_SUMMARY,
@@ -28,6 +34,7 @@ from script import DATE_FROM, DATE_TO, OUTPUT_OFFLINE_TOURNAMENT_CSV
 ROOT_VOTES_CSV = Path("polemica_mafia_first_votes.csv")
 ROOT_FOULS_CSV = Path("polemica_black_speech_fouls.csv")
 ROOT_CIV_CSV = Path("polemica_civilian_first_votes.csv")
+ROOT_CHECK_CSV = Path("polemica_sheriff_n1_black_checks.csv")
 ROOT_COMBINED_CSV = Path("polemica_offline_tournament_analysis.csv")
 
 RENAME_FOR_OFFLINE = {
@@ -58,6 +65,10 @@ RENAME_FOR_OFFLINE = {
     "civ_pct_sheriff": "civ_first_vote_pct_sheriff",
     "civ_pct_civilian": "civ_first_vote_pct_civilian",
     "civ_pct_black": "civ_first_vote_pct_black",
+    "sheriff_n1_checked": "sheriff_n1_checked_black",
+    "sheriff_n1_checked_as_mafia": "sheriff_n1_checked_as_mafia",
+    "sheriff_n1_checked_as_don": "sheriff_n1_checked_as_don",
+    "pct_sheriff_n1_on_black": "sheriff_n1_pct_on_black",
 }
 
 
@@ -75,9 +86,10 @@ def with_period(row: dict) -> dict:
     return out
 
 
-def build_combined_row(vote: dict, foul: dict | None, civ: dict | None) -> dict:
+def build_combined_row(vote: dict, foul: dict | None, civ: dict | None, check: dict | None) -> dict:
     foul = foul or {}
     civ = civ or {}
+    check = check or {}
     return {
         "date_from": DATE_FROM,
         "date_to": DATE_TO,
@@ -121,6 +133,10 @@ def build_combined_row(vote: dict, foul: dict | None, civ: dict | None) -> dict:
         "speech_on_sheriff": foul.get("on_sheriff"),
         "speech_pct_on_black": foul.get("pct_on_black_vs_red"),
         "speech_pct_on_red": foul.get("pct_on_red_vs_black"),
+        "sheriff_n1_checked": check.get("sheriff_n1_checked"),
+        "sheriff_n1_checked_as_mafia": check.get("sheriff_n1_checked_as_mafia"),
+        "sheriff_n1_checked_as_don": check.get("sheriff_n1_checked_as_don"),
+        "pct_sheriff_n1_on_black": check.get("pct_sheriff_n1_on_black"),
     }
 
 
@@ -153,6 +169,7 @@ def export_all() -> dict:
     fouls_per, fouls_overall = analyze_fouls()
     votes_per, votes_overall = analyze_votes()
     civ_per, civ_overall = analyze_civ()
+    check_per, check_overall = analyze_checks()
 
     foul_players = [
         with_period(fouls_row(stats))
@@ -169,6 +186,11 @@ def export_all() -> dict:
         for _, stats in sorted(civ_per.items(), key=lambda item: item[1]["poster_nick"])
     ]
     civ_all = with_period(civ_row(civ_overall, "ALL"))
+    check_players = [
+        with_period(check_row(stats))
+        for _, stats in sorted(check_per.items(), key=lambda item: item[1]["poster_nick"])
+    ]
+    check_all = with_period(check_row(check_overall, "ALL"))
 
     write_csv(FOULS_SUMMARY, foul_players)
     write_csv(FOULS_OVERALL, [foul_all])
@@ -182,13 +204,19 @@ def export_all() -> dict:
     write_csv(CIV_OVERALL, [civ_all])
     write_csv(ROOT_CIV_CSV, [civ_all, *civ_players])
 
+    write_csv(CHECK_SUMMARY, check_players)
+    write_csv(CHECK_OVERALL, [check_all])
+    write_csv(ROOT_CHECK_CSV, [check_all, *check_players])
+
     fouls_by_nick = {row["poster_nick"]: row for row in [foul_all, *foul_players]}
     civ_by_nick = {row["poster_nick"]: row for row in [civ_all, *civ_players]}
+    check_by_nick = {row["poster_nick"]: row for row in [check_all, *check_players]}
     combined = [
         build_combined_row(
             vote,
             fouls_by_nick.get(vote["poster_nick"]),
             civ_by_nick.get(vote["poster_nick"]),
+            check_by_nick.get(vote["poster_nick"]),
         )
         for vote in [vote_all, *vote_players]
     ]
@@ -199,46 +227,46 @@ def export_all() -> dict:
         "votes": (vote_players, vote_all, votes_overall),
         "fouls": (foul_players, foul_all, fouls_overall),
         "civ": (civ_players, civ_all, civ_overall),
+        "checks": (check_players, check_all, check_overall),
         "combined": combined,
     }
 
 
 def main() -> None:
-    from analyze_mafia_day1_votes import fmt, pct
-    from analyze_civilian_first_votes import NOTE as CIV_NOTE
+    from analyze_mafia_day1_votes import fmt
+    from analyze_sheriff_n1_black_checks import NOTE as CHECK_NOTE
 
     result = export_all()
-    civ_players, civ_all, civ_overall = result["civ"]
+    check_players, check_all, check_overall = result["checks"]
 
     print(
-        f"Когда наш игрок мирный (не шериф): первый голос в шерифа; "
+        f"Когда наш игрок чёрный: проверка шерифа в первую ночь; "
         f"период {DATE_FROM} — {DATE_TO}",
         flush=True,
     )
-    print(CIV_NOTE, flush=True)
-    voted = civ_overall["games_with_vote"]
+    print(CHECK_NOTE, flush=True)
     print(
-        f"Мирных посадок: {civ_overall['civilian_games']}; "
-        f"% в шерифа: {pct(civ_overall['voted_sheriff'], voted)}%; "
-        f"в мирных: {civ_overall['voted_civilian']}; "
-        f"в чёрных: {civ_overall['voted_black']} "
-        f"[дон {civ_overall['voted_don']}, мафия {civ_overall['voted_mafia']}]",
+        f"Чёрных посадок: {check_overall['black_games']}; "
+        f"шериф ткнул в первую ночь: {check_overall['checked_n1']} "
+        f"({check_all['pct_sheriff_n1_on_black']}%) "
+        f"[мафия {check_overall['checked_n1_as_mafia']}, дон {check_overall['checked_n1_as_don']}]",
         flush=True,
     )
-    print(f"CSV: {ROOT_CIV_CSV}", flush=True)
+    print(f"CSV: {ROOT_CHECK_CSV}", flush=True)
     print(f"CSV всё вместе: {ROOT_COMBINED_CSV}", flush=True)
     print("", flush=True)
-    header = "игрок | мирный | %шер | в мирных | в чёрных"
+    header = "игрок | чёрных | ткнул N1 | % | как мафия | как дон"
     print(header, flush=True)
-    for row in [civ_all, *civ_players]:
+    for row in [check_all, *check_players]:
         print(
             " | ".join(
                 [
                     fmt(row["poster_nick"]),
-                    fmt(row["civilian_games"]),
-                    fmt(row["pct_sheriff"]),
-                    fmt(row["voted_civilian"]),
-                    fmt(row["voted_black"]),
+                    fmt(row["black_games"]),
+                    fmt(row["sheriff_n1_checked"]),
+                    fmt(row["pct_sheriff_n1_on_black"]),
+                    fmt(row["sheriff_n1_checked_as_mafia"]),
+                    fmt(row["sheriff_n1_checked_as_don"]),
                 ]
             ),
             flush=True,
