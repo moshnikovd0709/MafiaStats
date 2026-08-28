@@ -50,9 +50,6 @@ RENAME_FOR_OFFLINE = {
     "don_games": "protocol_don_games",
     "games_with_speech_foul": "speech_games_with_foul",
     "civilian_games": "civ_games",
-    "civ_games_with_first_vote": "civ_first_vote_games",
-    "civ_games_no_first_vote": "civ_first_vote_no_vote",
-    "civ_voted_sheriff": "civ_first_vote_sheriff",
     "civ_voted_civilian": "civ_first_vote_civilian",
     "civ_voted_don": "civ_first_vote_don",
     "civ_voted_mafia": "civ_first_vote_mafia",
@@ -103,9 +100,6 @@ def build_combined_row(vote: dict, foul: dict | None, civ: dict | None) -> dict:
         "pct_own_black": vote.get("pct_own_black"),
         "pct_red_town": vote.get("pct_red_town"),
         "civilian_games": civ.get("civilian_games"),
-        "civ_games_with_first_vote": civ.get("games_with_first_vote"),
-        "civ_games_no_first_vote": civ.get("games_no_first_vote"),
-        "civ_voted_sheriff": civ.get("voted_sheriff"),
         "civ_voted_civilian": civ.get("voted_civilian"),
         "civ_voted_don": civ.get("voted_don"),
         "civ_voted_mafia": civ.get("voted_mafia"),
@@ -139,7 +133,16 @@ def merge_into_offline_csv(combined_rows: list[dict]) -> None:
     extra = extra[extra["poster_nick"] != "ALL"].copy()
     extra = extra.drop(columns=["date_from", "date_to", "polemica_nick", "user_id"], errors="ignore")
     extra = extra.rename(columns=RENAME_FOR_OFFLINE)
-    drop_cols = [col for col in extra.columns if col != "poster_nick" and col in base.columns]
+    stale = [
+        "civ_first_vote_games",
+        "civ_first_vote_no_vote",
+        "civ_first_vote_sheriff",
+    ]
+    drop_cols = [
+        col
+        for col in list(extra.columns) + stale
+        if col != "poster_nick" and col in base.columns
+    ]
     if drop_cols:
         base = base.drop(columns=drop_cols)
     merged = base.merge(extra, on="poster_nick", how="left")
@@ -216,21 +219,16 @@ def main() -> None:
     voted = civ_overall["games_with_vote"]
     print(
         f"Мирных посадок: {civ_overall['civilian_games']}; "
-        f"с голосом: {voted}; без голоса: {civ_overall['games_no_vote']}",
-        flush=True,
-    )
-    print(
-        f"В шерифа: {civ_overall['voted_sheriff']} ({pct(civ_overall['voted_sheriff'], voted)}%); "
-        f"в мирных: {civ_overall['voted_civilian']} ({pct(civ_overall['voted_civilian'], voted)}%); "
-        f"в чёрных: {civ_overall['voted_black']} ({pct(civ_overall['voted_black'], voted)}%) "
-        f"[дон {civ_overall['voted_don']}, мафия {civ_overall['voted_mafia']}]; "
-        f"в себя: {civ_overall['voted_self']}",
+        f"% в шерифа: {pct(civ_overall['voted_sheriff'], voted)}%; "
+        f"в мирных: {civ_overall['voted_civilian']}; "
+        f"в чёрных: {civ_overall['voted_black']} "
+        f"[дон {civ_overall['voted_don']}, мафия {civ_overall['voted_mafia']}]",
         flush=True,
     )
     print(f"CSV: {ROOT_CIV_CSV}", flush=True)
     print(f"CSV всё вместе: {ROOT_COMBINED_CSV}", flush=True)
     print("", flush=True)
-    header = "игрок | мирный | голос | в шерифа | %шер | в мирных | в чёрных"
+    header = "игрок | мирный | %шер | в мирных | в чёрных"
     print(header, flush=True)
     for row in [civ_all, *civ_players]:
         print(
@@ -238,8 +236,6 @@ def main() -> None:
                 [
                     fmt(row["poster_nick"]),
                     fmt(row["civilian_games"]),
-                    fmt(row["games_with_first_vote"]),
-                    fmt(row["voted_sheriff"]),
                     fmt(row["pct_sheriff"]),
                     fmt(row["voted_civilian"]),
                     fmt(row["voted_black"]),
